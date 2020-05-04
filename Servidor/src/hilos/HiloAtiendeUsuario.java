@@ -23,6 +23,7 @@ public class HiloAtiendeUsuario extends Thread {
     private DataInputStream fentrada;
     private DataOutputStream fsalida;
     private Socket socket;
+    private String[] mensajes;
 
     public HiloAtiendeUsuario(Socket socket, DataOutputStream dos, DataInputStream dis) {
         this.socket = socket;
@@ -33,17 +34,20 @@ public class HiloAtiendeUsuario extends Thread {
      @Override
     public void run() {
         try {
-            
-           final String[] mensajes = fentrada.readUTF().split(",");
-           if(mensajes[0].equals("1")){
-                HiloLogin hl = new HiloLogin(fsalida,mensajes[1], mensajes[2]);
-                hl.run();
-                hl.join();
-               
-           }
-        
-        } catch (InterruptedException ex) {
-                   Logger.getLogger(HiloAtiendeUsuario.class.getName()).log(Level.SEVERE, null, ex);
+            while(true){
+                mensajes = fentrada.readUTF().split(",");
+                switch (mensajes[0]) {
+                    case "1":
+                        login(mensajes);
+                        break;
+                    case "2":
+                        crearUsuario(mensajes);
+                        break;
+                    default:
+                        System.out.println("Se ha liado");
+                        System.exit(0);
+                }                    
+            }        
         } catch (IOException ex) {
             Logger.getLogger(HiloAtiendeUsuario.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
@@ -54,6 +58,26 @@ public class HiloAtiendeUsuario extends Thread {
             } catch (IOException ex) {
                 Logger.getLogger(HiloAtiendeUsuario.class.getName()).log(Level.SEVERE, null, ex);
             }
+        }
+    }
+    
+    private void login(String[] mensajes) {
+        try {
+            HiloLogin hl = new HiloLogin(fsalida,mensajes[1], mensajes[2]);
+            hl.run();
+            hl.join();
+        } catch (InterruptedException ex) {
+            Logger.getLogger(HiloAtiendeUsuario.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    private void crearUsuario(String[] mensajes) {
+        try {
+            HiloInsertarUsuario hl = new HiloInsertarUsuario(fsalida,mensajes[1], mensajes[2], mensajes[3], mensajes[4]);
+            hl.run();
+            hl.join();
+        } catch (InterruptedException ex) {
+            Logger.getLogger(HiloAtiendeUsuario.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 }

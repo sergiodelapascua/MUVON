@@ -50,8 +50,6 @@ public class Login extends javax.swing.JPanel {
 
         jLabel1.setText("Correo");
 
-        jTextFieldCorreo.setText("jTextField1");
-
         jLabel2.setText("Contraseña");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
@@ -99,21 +97,7 @@ public class Login extends javax.swing.JPanel {
     public String getCorreo(){return jTextFieldCorreo.getText();}
     
     public String getPwd(){
-        MessageDigest md = null;
-        byte[] mb = null;
-	String password = jTextFieldContrasena.getText();
-        try {
-            
-            //SHA-512
-            md= MessageDigest.getInstance("SHA-512");
-            md.update(password.getBytes());
-            mb = md.digest();
-            System.out.println(String.valueOf(Hex.encodeHex(mb)));
-            
-        } catch (NoSuchAlgorithmException e) {
-            //Error
-        }
-        return String.valueOf(Hex.encodeHex(mb));
+	return jTextFieldContrasena.getText();
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

@@ -1,10 +1,14 @@
 package com.example.muvon.activities;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.example.muvon.R;
@@ -22,7 +26,7 @@ public class MainActivity extends AppCompatActivity {
     DataInputStream flujoentrada = null;
     static Socket socket = null;
     TextView click;
-    TextView txt;
+    Button boton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,23 +36,51 @@ public class MainActivity extends AppCompatActivity {
         StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder().permitNetwork().build());
 
         click = (TextView) findViewById(R.id.textViewCrearCuenta);
-        txt = (TextView) findViewById(R.id.textViewPrueba);
+        boton = (Button) findViewById(R.id.iniciar_sesion);
 
         click.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                txt.setText("HOLA MUNDO");
+                DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        switch (which){
+                            case DialogInterface.BUTTON_POSITIVE:
+                                Intent intent = new Intent(MainActivity.this, Registro.class);
+                                startActivity(intent);
+                                break;
+
+                            case DialogInterface.BUTTON_NEGATIVE:
+                                //ignorar
+                                break;
+                        }
+                    }
+                };
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(v.getContext());
+                builder.setMessage("A continuación tendrás que añadir cierta información para crear tu perfil, ¿estás de acuerdo?").setPositiveButton("Aceptar", dialogClickListener)
+                        .setNegativeButton("Cancelar", dialogClickListener).show();
+
             }
         });
 
-        try {
+        /*try {
             socket = new Socket(host, puerto);
             flujosalida = new DataOutputStream(socket.getOutputStream());
             flujoentrada = new DataInputStream(socket.getInputStream());
             System.out.println("LA ENTRADAAAAA : " + flujoentrada.readUTF());
         } catch (IOException e) {
             e.printStackTrace();
-        }
+        }*/
+
+        boton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+
+
 
     }
 }

@@ -40,25 +40,19 @@ public class HiloInsertarUsuario extends Thread{
     
     @Override
     public void run() {
-        boolean admin = false;
+        int inserciones = 0;
         try (Connection conexion = DriverManager.getConnection(url, username, password);
-            PreparedStatement p = conexion.prepareStatement("INSERT (nombres, apellidos, correo, pwd) INTO usuario VALUES (?,?,?,?)");) {
+            PreparedStatement p = conexion.prepareStatement("INSERT INTO usuario (nombre, apellidos, correo, pwd) VALUES (?,?,?,?)");) {
             p.setString(1, nombre);
             p.setString(2, apellidos);
             p.setString(3, c);
             p.setString(4, pwd);
-            /*ResultSet rset = p.executeUpdate();
-            while (rset.next()) {
-                admin = rset.getBoolean("administrador");            
-            }*/
+            inserciones = p.executeUpdate();
+            fsalida.writeUTF((inserciones == 1)? "true":"false");
         } catch (SQLException ex) {
-            ex.printStackTrace();
-        }
-        
-        try {
-            fsalida.writeUTF((admin)? "true":"false");
+            Logger.getLogger(HiloInsertarUsuario.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
             Logger.getLogger(HiloLogin.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        } 
     }
 }
