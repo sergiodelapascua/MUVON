@@ -1,7 +1,10 @@
 package com.example.muvon.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
+
 import android.os.Bundle;
+
+import com.example.muvon.R;
 
 public class Principal extends AppCompatActivity {
 

@@ -1,10 +1,17 @@
 package com.example.muvon.fragments;
 
 import android.os.Bundle;
+
+import androidx.core.view.MenuItemCompat;
 import androidx.fragment.app.Fragment;
+
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.SearchView;
 
 import com.example.muvon.R;
 
@@ -12,9 +19,8 @@ import com.example.muvon.R;
  * A simple {@link Fragment} subclass.
  * Use the {@link FragmentSocial#newInstance} factory method to
  * create an instance of this fragment.
- *
  */
-public class FragmentSocial extends Fragment {
+public class FragmentSocial extends Fragment implements SearchView.OnQueryTextListener{
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -23,6 +29,10 @@ public class FragmentSocial extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+
+    public FragmentSocial() {
+        // Required empty public constructor
+    }
 
     /**
      * Use this factory method to create a new instance of
@@ -41,9 +51,6 @@ public class FragmentSocial extends Fragment {
         fragment.setArguments(args);
         return fragment;
     }
-    public FragmentSocial() {
-        // Required empty public constructor
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -59,5 +66,28 @@ public class FragmentSocial extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_social, container, false);
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.search_menu, menu);
+        final MenuItem menuItem = menu.findItem(R.id.search);
+        SearchView searchView = (SearchView)
+                MenuItemCompat.getActionView(menuItem);
+        searchView.setOnQueryTextListener(this);
+
+
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onQueryTextSubmit(String query) {
+        return true;
+    }
+
+    @Override
+    public boolean onQueryTextChange(String newText) {
+        //RELLENAR
+        return false;
     }
 }

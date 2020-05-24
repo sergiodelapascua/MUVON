@@ -7,6 +7,8 @@ package hilos;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -14,6 +16,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.commons.codec.binary.Hex;
 
 /**
  *
@@ -46,7 +49,7 @@ public class HiloInsertarUsuario extends Thread{
             p.setString(1, nombre);
             p.setString(2, apellidos);
             p.setString(3, c);
-            p.setString(4, pwd);
+            p.setString(4, encriptarPwd(pwd));
             inserciones = p.executeUpdate();
             fsalida.writeUTF((inserciones == 1)? "true":"false");
         } catch (SQLException ex) {
@@ -54,5 +57,24 @@ public class HiloInsertarUsuario extends Thread{
         } catch (IOException ex) {
             Logger.getLogger(HiloLogin.class.getName()).log(Level.SEVERE, null, ex);
         } 
+    }
+    
+    
+    private String encriptarPwd(String password){
+        MessageDigest md = null;
+        byte[] mb = null;
+        try {
+            
+            //SHA-512
+            md= MessageDigest.getInstance("SHA-512");
+            md.update(password.getBytes());
+            mb = md.digest();
+            System.out.println(String.valueOf(Hex.encodeHex(mb)));
+            
+        } catch (NoSuchAlgorithmException e) {
+            //Error
+        }
+        
+        return String.valueOf(Hex.encodeHex(mb));
     }
 }

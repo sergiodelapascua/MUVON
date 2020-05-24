@@ -7,6 +7,8 @@ package hilos;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -14,6 +16,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.commons.codec.binary.Hex;
 
 /**
  *
@@ -40,7 +43,7 @@ public class HiloLogin extends Thread{
         try (Connection conexion = DriverManager.getConnection(url, username, password);
             PreparedStatement p = conexion.prepareStatement("SELECT administrador FROM usuario where correo = (?) and pwd = (?)");) {
             p.setString(1, c);
-            p.setString(2, pwd);
+            p.setString(2, encriptarPwd(pwd));
             ResultSet rset = p.executeQuery();
             while (rset.next()) {
                 admin = rset.getBoolean("administrador");            
@@ -54,5 +57,24 @@ public class HiloLogin extends Thread{
         } catch (IOException ex) {
             Logger.getLogger(HiloLogin.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+    
+    
+    private String encriptarPwd(String password){
+        MessageDigest md = null;
+        byte[] mb = null;
+        try {
+            
+            //SHA-512
+            md= MessageDigest.getInstance("SHA-512");
+            md.update(password.getBytes());
+            mb = md.digest();
+            System.out.println(String.valueOf(Hex.encodeHex(mb)));
+            
+        } catch (NoSuchAlgorithmException e) {
+            //Error
+        }
+        
+        return String.valueOf(Hex.encodeHex(mb));
     }
 }

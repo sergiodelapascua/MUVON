@@ -15,7 +15,6 @@ import com.example.muvon.R;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
-import java.io.IOException;
 import java.net.Socket;
 
 public class MainActivity extends AppCompatActivity {
@@ -26,7 +25,7 @@ public class MainActivity extends AppCompatActivity {
     DataInputStream flujoentrada = null;
     static Socket socket = null;
     TextView click;
-    Button boton;
+    Button botonIniciarSesion;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,7 +35,7 @@ public class MainActivity extends AppCompatActivity {
         StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder().permitNetwork().build());
 
         click = (TextView) findViewById(R.id.textViewCrearCuenta);
-        boton = (Button) findViewById(R.id.iniciar_sesion);
+        botonIniciarSesion = (Button) findViewById(R.id.iniciar_sesion);
 
         click.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -58,7 +57,8 @@ public class MainActivity extends AppCompatActivity {
                 };
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(v.getContext());
-                builder.setMessage("A continuación tendrás que añadir cierta información para crear tu perfil, ¿estás de acuerdo?").setPositiveButton("Aceptar", dialogClickListener)
+                builder.setMessage("A continuación tendrás que añadir cierta información para crear tu perfil, ¿estás de acuerdo?")
+                        .setPositiveButton("Aceptar", dialogClickListener)
                         .setNegativeButton("Cancelar", dialogClickListener).show();
 
             }
@@ -73,10 +73,11 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
         }*/
 
-        boton.setOnClickListener(new View.OnClickListener() {
+        botonIniciarSesion.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                /*Intent intent = new Intent(MainActivity.this, Principal.class);
+                startActivity(intent);*/
             }
         });
 

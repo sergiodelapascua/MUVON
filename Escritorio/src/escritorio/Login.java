@@ -18,13 +18,13 @@ public class Login extends javax.swing.JPanel {
     /**
      * Creates new form Login
      */
-    private VentanaPrincipal parent;
+    private VentanaLogin parent;
     
     public Login() {
         initComponents();
     }
     
-    public void setParent(VentanaPrincipal p){ parent = p; }
+    public void setParent(VentanaLogin p){ parent = p; }
 
     /**
      * This method is called from within the constructor to initialize the form.

@@ -18,7 +18,7 @@
         android:id="@+id/fila_partido"
         android:background="@android:color/white">
 
-        <!-- Icono del avatar -->
+        <!-- Icono del deporte -->
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
@@ -56,32 +56,35 @@
                 android:textSize="20sp"
                 android:textStyle="bold"/>
 
-            <!-- Info del partido -->
-            <LinearLayout
-                android:orientation="horizontal"
+            <!-- Info de la notificación -->
+
+            <TextView
+                android:id="@+id/notificacion"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_weight= "0.50">
+                android:layout_weight="0.5"
+                android:text="Texto informativo"
+                android:textSize="20sp"/>
 
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="0.8"
-                    android:text="Partidos a los que unirse:"
-                    android:textSize="20sp"/>
-
-                <TextView
-                    android:id="@+id/partido_para_unirse"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="0.2"
-                    android:text="2"
-                    android:textSize="20sp"/>
-
-            </LinearLayout>
         </LinearLayout>
 
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.2"
+            android:paddingLeft="8dp"
+            android:paddingRight="8dp"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp">
 
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:padding="12dp"
+                android:src="@drawable/ic_cruz"/>
+        </LinearLayout>
 
     </LinearLayout>
 

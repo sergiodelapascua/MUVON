@@ -1,4 +1,12 @@
 <resources>
     <string name="app_name">MUVON</string>
     <string name="titulo">MUVON</string>
+
+    <string-array name="deportes_array">
+        <item>Seleccione un deporte</item>
+        <item>Fútbol</item>
+        <item>Padel</item>
+        <item>Basket</item>
+        <item>Balonmano</item>
+    </string-array>
 </resources>

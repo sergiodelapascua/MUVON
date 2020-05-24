@@ -18,7 +18,7 @@
         android:id="@+id/fila_partido"
         android:background="@android:color/white">
 
-        <!-- Icono del deporte -->
+        <!-- Icono del avatar -->
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
@@ -29,91 +29,59 @@
             android:paddingBottom="8dp">
 
             <ImageView
-                android:id="@+id/champIcon"
+                android:id="@+id/avatar"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_gravity="center"
-                android:gravity="center"/>
+                android:gravity="center"
+                android:src="@drawable/male_ic"/>
         </LinearLayout>
 
         <!-- Info del partido -->
         <LinearLayout
             android:orientation="vertical"
             android:layout_width="0dp"
+            android:layout_weight="0.6"
             android:layout_height="match_parent"
-            android:layout_weight= "0.60"
             android:padding="8dp">
 
             <TextView
-                android:id="@+id/titulo_partido"
+                android:id="@+id/nombre_usuario"
                 android:layout_width="wrap_content"
                 android:layout_height="0dp"
-                android:layout_weight="0.25"
+                android:layout_weight="0.5"
                 android:ems="15"
-                android:text="Partido de fulanito"
+                android:text="Sergio de la Pascua Roca"
                 android:gravity="bottom"
                 android:textSize="20sp"
                 android:textStyle="bold"/>
 
-            <TextView
-                android:id="@+id/fecha_partido"
-                android:layout_width="wrap_content"
-                android:layout_height="0dp"
-                android:layout_weight="0.25"
-                android:ems="15"
-                android:text="Fecha xx/xx/xxxx"
-                android:gravity="bottom"
-                android:textSize="20sp"/>
-
-            <TextView
-                android:id="@+id/champName"
-                android:layout_width="wrap_content"
-                android:layout_height="0dp"
-                android:layout_weight="0.25"
-                android:ems="15"
-                android:text="Horario"
-                android:gravity="bottom"
-                android:textSize="20sp"/>
-
-            <TextView
-                android:id="@+id/champTitle"
+            <!-- Info del partido -->
+            <LinearLayout
+                android:orientation="horizontal"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_weight="0.25"
-                android:text="Nivel *****"
-                android:textSize="18sp"
-                android:textColor="@android:color/darker_gray" />
+                android:layout_weight= "0.50">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0.8"
+                    android:text="Partidos a los que unirse:"
+                    android:textSize="20sp"/>
+
+                <TextView
+                    android:id="@+id/partido_para_unirse"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0.2"
+                    android:text="2"
+                    android:textSize="20sp"/>
+
+            </LinearLayout>
         </LinearLayout>
 
-        <!-- Info del partido -->
-        <LinearLayout
-            android:orientation="vertical"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight= "0.20"
-            android:padding="8dp">
 
-            <TextView
-                android:id="@+id/pista_partido"
-                android:layout_width="wrap_content"
-                android:layout_height="0dp"
-                android:layout_weight="0.25"
-                android:ems="15"
-                android:text="Pista X"
-                android:gravity="center"
-                android:textSize="20sp"
-                android:textStyle="bold"/>
-
-            <TextView
-                android:id="@+id/asistentes_partido"
-                android:layout_width="wrap_content"
-                android:layout_height="0dp"
-                android:layout_weight="0.25"
-                android:ems="15"
-                android:text="x/10"
-                android:gravity="center"
-                android:textSize="20sp"/>
-        </LinearLayout>
 
     </LinearLayout>
 

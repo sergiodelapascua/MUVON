@@ -23,7 +23,7 @@ import org.apache.commons.codec.binary.Hex;
  *
  * @author sergio
  */
-public class VentanaPrincipal extends javax.swing.JFrame {
+public class VentanaLogin extends javax.swing.JFrame {
 
     /**
      * Creates new form VentanaPrincipal
@@ -36,7 +36,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
     Socket socket = null;
             
             
-    public VentanaPrincipal() {
+    public VentanaLogin() {
         try {
             socket = new Socket(host, puerto);
             flujosalida = new DataOutputStream(socket.getOutputStream());
@@ -45,8 +45,10 @@ public class VentanaPrincipal extends javax.swing.JFrame {
             
             initComponents();
             
-        } catch (IOException ex) {
-            Logger.getLogger(VentanaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {            
+            JOptionPane.showMessageDialog(null, "No se ha podido establecer la conexión", "ERROR", 
+                        JOptionPane.ERROR_MESSAGE);
+            System.exit(0);
         }
     }
 
@@ -177,7 +179,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
 
         jPanelVentanaPrincipal.setBackground(new java.awt.Color(61, 138, 247));
 
-        jLabel1.setFont(new java.awt.Font("DejaVu Math TeX Gyre", 1, 36)); // NOI18N
+        jLabel1.setFont(new java.awt.Font("Roboto Medium", 1, 36)); // NOI18N
         jLabel1.setForeground(new java.awt.Color(255, 255, 255));
         jLabel1.setText("MUVON");
 
@@ -237,7 +239,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         if (mather.find() == true) {
             if (pwd.equals(jTextFieldPwd2.getText())){
                 try {
-                    flujosalida.writeUTF("2,"+nombre+","+apellidos+","+email+","+encriptarPwd(pwd));
+                    flujosalida.writeUTF("2,"+nombre+","+apellidos+","+email+","+pwd);
                     String mensaje = "";
                     mensaje = flujoentrada.readUTF();
                     System.out.println("EL MENSAJE: "+mensaje);
@@ -247,7 +249,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
                     JOptionPane.showMessageDialog(null, "ERROR");            
             
                 } catch (IOException ex) {
-                    Logger.getLogger(VentanaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(VentanaLogin.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }else
                 JOptionPane.showMessageDialog(null, "Las contraseñas no coinciden", "ERROR", 
@@ -277,20 +279,24 @@ public class VentanaPrincipal extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(VentanaPrincipal.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(VentanaLogin.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(VentanaPrincipal.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(VentanaLogin.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(VentanaPrincipal.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(VentanaLogin.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(VentanaPrincipal.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(VentanaLogin.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
         //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new VentanaPrincipal().setVisible(true);
+                VentanaLogin v1 = new VentanaLogin();
+                v1.setLocationRelativeTo(null);
+                v1.setVisible(true);
+                
             }
         });
                        
@@ -320,39 +326,21 @@ public class VentanaPrincipal extends javax.swing.JFrame {
 
     public void hacerLogin() {
         try {
-            flujosalida.writeUTF("1,"+login1.getCorreo()+","+encriptarPwd(login1.getPwd()));
+            flujosalida.writeUTF("1,"+login1.getCorreo()+","+login1.getPwd());
             String mensaje = "";
             mensaje = flujoentrada.readUTF();
             System.out.println("EL MENSAJE: "+mensaje);
             if(mensaje.equals("true")){
                 JOptionPane.showMessageDialog(null, "Bienvenido");
                 login1.setVisible(false);
-                jDialogNuevoUsuario.setSize(255, 288);
                 jDialogNuevoUsuario.setLocationRelativeTo(null);
                 jDialogNuevoUsuario.setVisible(true);
             } else 
                 JOptionPane.showMessageDialog(null, "ERROR");            
             
         } catch (IOException ex) {
-            Logger.getLogger(VentanaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(VentanaLogin.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     
-    private String encriptarPwd(String password){
-        MessageDigest md = null;
-        byte[] mb = null;
-        try {
-            
-            //SHA-512
-            md= MessageDigest.getInstance("SHA-512");
-            md.update(password.getBytes());
-            mb = md.digest();
-            System.out.println(String.valueOf(Hex.encodeHex(mb)));
-            
-        } catch (NoSuchAlgorithmException e) {
-            //Error
-        }
-        
-        return String.valueOf(Hex.encodeHex(mb));
-    }
 }

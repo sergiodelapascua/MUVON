@@ -1,63 +1,60 @@
 package com.example.muvon.fragments;
 
+import android.content.Context;
 import android.os.Bundle;
+
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
+import android.widget.Spinner;
 
 import com.example.muvon.R;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link FragmentPartidos#newInstance} factory method to
- * create an instance of this fragment.
- *
- */
 public class FragmentPartidos extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    private RecyclerView recyclerView;
+    private RecyclerView.LayoutManager layoutManager;
+    /*private ChampionAdapter adapter;
+    private ChampionViewModel model =  null;
+    private FavViewModel favModel = null;
+    private ChampClicked callback;*/
+    private Context context;
+    private LinearLayout ly;
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment FragmentPartidos.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static FragmentPartidos newInstance(String param1, String param2) {
-        FragmentPartidos fragment = new FragmentPartidos();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
     public FragmentPartidos() {
         // Required empty public constructor
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
-    }
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_partidos, container, false);
+        //ly = view.findViewById(R.id.no_connection);
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_partidos, container, false);
+        context = this.getContext();
+
+        recyclerView = view.findViewById(R.id.recyclerView);
+        layoutManager = new LinearLayoutManager(getActivity());
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setItemViewCacheSize(20);
+        recyclerView.setDrawingCacheEnabled(true);
+        recyclerView.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
+
+        Spinner spinner = (Spinner) view.findViewById(R.id.spinner);
+        // Create an ArrayAdapter using the string array and a default spinner layout
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(context,
+                R.array.deportes_array, android.R.layout.simple_spinner_item);
+        // Specify the layout to use when the list of choices appears
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        // Apply the adapter to the spinner
+        spinner.setAdapter(adapter);
+
+        return view;
     }
 }
