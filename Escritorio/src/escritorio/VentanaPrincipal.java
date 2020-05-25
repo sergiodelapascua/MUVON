@@ -5,6 +5,20 @@
  */
 package escritorio;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.net.Socket;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import javax.swing.JOptionPane;
+import org.apache.commons.codec.binary.Hex;
+
 /**
  *
  * @author sergio
@@ -12,10 +26,30 @@ package escritorio;
 public class VentanaPrincipal extends javax.swing.JFrame {
 
     /**
-     * Creates new form Ventana
+     * Creates new form VentanaPrincipal
      */
+    
+    String host = "localhost";
+    int puerto = 4444;
+    DataOutputStream flujosalida = null;
+    DataInputStream flujoentrada = null;
+    Socket socket = null;
+            
+            
     public VentanaPrincipal() {
-        initComponents();
+        try {
+            socket = new Socket(host, puerto);
+            flujosalida = new DataOutputStream(socket.getOutputStream());
+            flujoentrada = new DataInputStream(socket.getInputStream());
+            System.out.println(flujoentrada.readUTF());
+            
+            initComponents();
+            
+        } catch (IOException ex) {            
+            JOptionPane.showMessageDialog(null, "No se ha podido establecer la conexión", "ERROR", 
+                        JOptionPane.ERROR_MESSAGE);
+            System.exit(0);
+        }
     }
 
     /**
@@ -27,25 +61,155 @@ public class VentanaPrincipal extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jDialogNuevoUsuario = new javax.swing.JDialog();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jPanelJDScroable = new javax.swing.JPanel();
+        jLabel2 = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
+        jTextFieldNombre = new javax.swing.JTextField();
+        jLabel4 = new javax.swing.JLabel();
+        jTextFieldApellidos = new javax.swing.JTextField();
+        jLabel5 = new javax.swing.JLabel();
+        jTextFieldCorreo = new javax.swing.JTextField();
+        jLabel6 = new javax.swing.JLabel();
+        jTextFieldPwd1 = new javax.swing.JTextField();
+        jLabel7 = new javax.swing.JLabel();
+        jTextFieldPwd2 = new javax.swing.JTextField();
+        jButtonNuevoUsuario = new javax.swing.JButton();
+        jDialogLogin = new javax.swing.JDialog();
+        login1 = new escritorio.Login();
         jPanelVentanaPrincipal = new javax.swing.JPanel();
-        jLabel1 = new javax.swing.JLabel();
+        jLabelMuvon = new javax.swing.JLabel();
         jButtonReservas = new javax.swing.JButton();
         jButtonClientes = new javax.swing.JButton();
         jButtonAñadirPartido = new javax.swing.JButton();
         jButtonAñadirCliente = new javax.swing.JButton();
-        jLabel2 = new javax.swing.JLabel();
+        jLabelTitulo = new javax.swing.JLabel();
         jTextFieldBarraBusqueda = new javax.swing.JTextField();
         jButtonBuscar = new javax.swing.JButton();
-        jScrollPane1 = new javax.swing.JScrollPane();
+        jScrollPane2 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
+
+        jLabel2.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
+        jLabel2.setText("INSERTAR NUEVO USUARIO");
+
+        jLabel3.setText("Nombre ");
+
+        jLabel4.setText("Apellidos");
+
+        jLabel5.setText("Correo");
+
+        jLabel6.setText("Contraseña");
+
+        jLabel7.setText("Repetir");
+
+        jButtonNuevoUsuario.setText("Crear usuario");
+        jButtonNuevoUsuario.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonNuevoUsuarioActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanelJDScroableLayout = new javax.swing.GroupLayout(jPanelJDScroable);
+        jPanelJDScroable.setLayout(jPanelJDScroableLayout);
+        jPanelJDScroableLayout.setHorizontalGroup(
+            jPanelJDScroableLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanelJDScroableLayout.createSequentialGroup()
+                .addContainerGap(51, Short.MAX_VALUE)
+                .addGroup(jPanelJDScroableLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanelJDScroableLayout.createSequentialGroup()
+                        .addGroup(jPanelJDScroableLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jLabel2)
+                            .addGroup(jPanelJDScroableLayout.createSequentialGroup()
+                                .addGroup(jPanelJDScroableLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(jPanelJDScroableLayout.createSequentialGroup()
+                                        .addGap(4, 4, 4)
+                                        .addGroup(jPanelJDScroableLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addComponent(jLabel4)
+                                            .addComponent(jLabel5)
+                                            .addComponent(jLabel6)
+                                            .addComponent(jLabel7)))
+                                    .addComponent(jLabel3))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(jPanelJDScroableLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jTextFieldCorreo)
+                                    .addComponent(jTextFieldApellidos)
+                                    .addComponent(jTextFieldPwd1)
+                                    .addComponent(jTextFieldNombre, javax.swing.GroupLayout.PREFERRED_SIZE, 189, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jTextFieldPwd2, javax.swing.GroupLayout.PREFERRED_SIZE, 189, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                        .addGap(47, 47, 47))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanelJDScroableLayout.createSequentialGroup()
+                        .addComponent(jButtonNuevoUsuario)
+                        .addGap(131, 131, 131))))
+        );
+        jPanelJDScroableLayout.setVerticalGroup(
+            jPanelJDScroableLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanelJDScroableLayout.createSequentialGroup()
+                .addGap(29, 29, 29)
+                .addComponent(jLabel2)
+                .addGap(35, 35, 35)
+                .addGroup(jPanelJDScroableLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel3)
+                    .addComponent(jTextFieldNombre, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(23, 23, 23)
+                .addGroup(jPanelJDScroableLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel4)
+                    .addComponent(jTextFieldApellidos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(25, 25, 25)
+                .addGroup(jPanelJDScroableLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel5)
+                    .addComponent(jTextFieldCorreo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(24, 24, 24)
+                .addGroup(jPanelJDScroableLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel6)
+                    .addComponent(jTextFieldPwd1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(26, 26, 26)
+                .addGroup(jPanelJDScroableLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel7)
+                    .addComponent(jTextFieldPwd2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(50, 50, 50)
+                .addComponent(jButtonNuevoUsuario)
+                .addContainerGap(151, Short.MAX_VALUE))
+        );
+
+        jScrollPane1.setViewportView(jPanelJDScroable);
+
+        javax.swing.GroupLayout jDialogNuevoUsuarioLayout = new javax.swing.GroupLayout(jDialogNuevoUsuario.getContentPane());
+        jDialogNuevoUsuario.getContentPane().setLayout(jDialogNuevoUsuarioLayout);
+        jDialogNuevoUsuarioLayout.setHorizontalGroup(
+            jDialogNuevoUsuarioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 378, javax.swing.GroupLayout.PREFERRED_SIZE)
+        );
+        jDialogNuevoUsuarioLayout.setVerticalGroup(
+            jDialogNuevoUsuarioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 534, javax.swing.GroupLayout.PREFERRED_SIZE)
+        );
+
+        jDialogLogin.setMaximumSize(new java.awt.Dimension(334, 300));
+        jDialogLogin.setMinimumSize(new java.awt.Dimension(334, 300));
+        jDialogLogin.setModal(true);
+        jDialogLogin.setResizable(false);
+
+        login1.setParent(this);
+
+        javax.swing.GroupLayout jDialogLoginLayout = new javax.swing.GroupLayout(jDialogLogin.getContentPane());
+        jDialogLogin.getContentPane().setLayout(jDialogLoginLayout);
+        jDialogLoginLayout.setHorizontalGroup(
+            jDialogLoginLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(login1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+        );
+        jDialogLoginLayout.setVerticalGroup(
+            jDialogLoginLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(login1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+        );
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         jPanelVentanaPrincipal.setBackground(new java.awt.Color(61, 138, 247));
 
-        jLabel1.setFont(new java.awt.Font("Roboto Medium", 1, 48)); // NOI18N
-        jLabel1.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel1.setText("MUVON");
+        jLabelMuvon.setFont(new java.awt.Font("Roboto Medium", 1, 48)); // NOI18N
+        jLabelMuvon.setForeground(new java.awt.Color(255, 255, 255));
+        jLabelMuvon.setText("MUVON");
 
         jButtonReservas.setBackground(new java.awt.Color(187, 187, 187));
         jButtonReservas.setForeground(new java.awt.Color(0, 0, 0));
@@ -68,8 +232,8 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         jButtonAñadirCliente.setForeground(new java.awt.Color(0, 0, 0));
         jButtonAñadirCliente.setText("Añadir Cliente");
 
-        jLabel2.setForeground(new java.awt.Color(0, 0, 0));
-        jLabel2.setText("TITULO PESTAÑA ACTUAL");
+        jLabelTitulo.setForeground(new java.awt.Color(0, 0, 0));
+        jLabelTitulo.setText("TITULO PESTAÑA ACTUAL");
 
         jButtonBuscar.setText("Buscar");
         jButtonBuscar.addActionListener(new java.awt.event.ActionListener() {
@@ -89,7 +253,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
-        jScrollPane1.setViewportView(jTable1);
+        jScrollPane2.setViewportView(jTable1);
 
         javax.swing.GroupLayout jPanelVentanaPrincipalLayout = new javax.swing.GroupLayout(jPanelVentanaPrincipal);
         jPanelVentanaPrincipal.setLayout(jPanelVentanaPrincipalLayout);
@@ -101,9 +265,9 @@ public class VentanaPrincipal extends javax.swing.JFrame {
                         .addGap(37, 37, 37)
                         .addGroup(jPanelVentanaPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanelVentanaPrincipalLayout.createSequentialGroup()
-                                .addComponent(jLabel1)
+                                .addComponent(jLabelMuvon)
                                 .addGap(234, 234, 234)
-                                .addComponent(jLabel2))
+                                .addComponent(jLabelTitulo))
                             .addGroup(jPanelVentanaPrincipalLayout.createSequentialGroup()
                                 .addGroup(jPanelVentanaPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(jButtonReservas)
@@ -111,7 +275,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
                                     .addComponent(jButtonAñadirPartido)
                                     .addComponent(jButtonAñadirCliente))
                                 .addGap(41, 41, 41)
-                                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 709, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 709, javax.swing.GroupLayout.PREFERRED_SIZE))))
                     .addGroup(jPanelVentanaPrincipalLayout.createSequentialGroup()
                         .addGap(388, 388, 388)
                         .addComponent(jTextFieldBarraBusqueda, javax.swing.GroupLayout.PREFERRED_SIZE, 219, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -119,16 +283,13 @@ public class VentanaPrincipal extends javax.swing.JFrame {
                         .addComponent(jButtonBuscar)))
                 .addContainerGap(53, Short.MAX_VALUE))
         );
-
-        jPanelVentanaPrincipalLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {jButtonAñadirCliente, jButtonAñadirPartido, jButtonClientes, jButtonReservas});
-
         jPanelVentanaPrincipalLayout.setVerticalGroup(
             jPanelVentanaPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanelVentanaPrincipalLayout.createSequentialGroup()
                 .addGap(71, 71, 71)
                 .addGroup(jPanelVentanaPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel1)
-                    .addComponent(jLabel2))
+                    .addComponent(jLabelMuvon)
+                    .addComponent(jLabelTitulo))
                 .addGap(18, 18, 18)
                 .addGroup(jPanelVentanaPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jTextFieldBarraBusqueda, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -143,11 +304,9 @@ public class VentanaPrincipal extends javax.swing.JFrame {
                         .addComponent(jButtonAñadirPartido)
                         .addGap(27, 27, 27)
                         .addComponent(jButtonAñadirCliente))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 375, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 375, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(49, 49, 49))
         );
-
-        jPanelVentanaPrincipalLayout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {jButtonAñadirCliente, jButtonAñadirPartido, jButtonClientes, jButtonReservas});
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -165,6 +324,41 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void jButtonNuevoUsuarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonNuevoUsuarioActionPerformed
+        // TODO add your handling code here:
+        String nombre = jTextFieldNombre.getText();
+        String apellidos = jTextFieldApellidos.getText();
+        String pwd = jTextFieldPwd1.getText();
+        
+        Pattern pattern = Pattern.compile("^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$");
+        String email = jTextFieldCorreo.getText();
+        Matcher mather = pattern.matcher(email);
+
+        if (mather.find() == true) {
+            if (pwd.equals(jTextFieldPwd2.getText())){
+                try {
+                    flujosalida.writeUTF("2,"+nombre+","+apellidos+","+email+","+pwd);
+                    String mensaje = "";
+                    mensaje = flujoentrada.readUTF();
+                    System.out.println("EL MENSAJE: "+mensaje);
+                    if(mensaje.equals("true")){
+                        JOptionPane.showMessageDialog(null, "Usuario creado");
+                } else 
+                    JOptionPane.showMessageDialog(null, "ERROR");            
+            
+                } catch (IOException ex) {
+                    Logger.getLogger(VentanaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }else
+                JOptionPane.showMessageDialog(null, "Las contraseñas no coinciden", "ERROR", 
+                        JOptionPane.ERROR_MESSAGE);
+        } else 
+            JOptionPane.showMessageDialog(null, "El email introducido no es válido", "ERROR", 
+                        JOptionPane.ERROR_MESSAGE);
+        
+       
+    }//GEN-LAST:event_jButtonNuevoUsuarioActionPerformed
+
     private void jButtonReservasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonReservasActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_jButtonReservasActionPerformed
@@ -177,11 +371,12 @@ public class VentanaPrincipal extends javax.swing.JFrame {
      * @param args the command line arguments
      */
     public static void main(String args[]) {
+
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
+        * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html
+        */
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
                 if ("Nimbus".equals(info.getName())) {
@@ -200,13 +395,20 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         }
         //</editor-fold>
         //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new VentanaPrincipal().setVisible(true);
+                VentanaPrincipal v1 = new VentanaPrincipal();
+                v1.setLocationRelativeTo(null);
+                v1.setVisible(true);
+                
             }
         });
+                       
+        //</editor-fold>
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -214,12 +416,49 @@ public class VentanaPrincipal extends javax.swing.JFrame {
     private javax.swing.JButton jButtonAñadirPartido;
     private javax.swing.JButton jButtonBuscar;
     private javax.swing.JButton jButtonClientes;
+    private javax.swing.JButton jButtonNuevoUsuario;
     private javax.swing.JButton jButtonReservas;
-    private javax.swing.JLabel jLabel1;
+    private javax.swing.JDialog jDialogLogin;
+    private javax.swing.JDialog jDialogNuevoUsuario;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabelMuvon;
+    private javax.swing.JLabel jLabelTitulo;
+    private javax.swing.JPanel jPanelJDScroable;
     private javax.swing.JPanel jPanelVentanaPrincipal;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTable jTable1;
+    private javax.swing.JTextField jTextFieldApellidos;
     private javax.swing.JTextField jTextFieldBarraBusqueda;
+    private javax.swing.JTextField jTextFieldCorreo;
+    private javax.swing.JTextField jTextFieldNombre;
+    private javax.swing.JTextField jTextFieldPwd1;
+    private javax.swing.JTextField jTextFieldPwd2;
+    private escritorio.Login login1;
     // End of variables declaration//GEN-END:variables
+
+    public void hacerLogin() {
+        try {
+            flujosalida.writeUTF("1,"+login1.getCorreo()+","+login1.getPwd());
+            String mensaje = "";
+            mensaje = flujoentrada.readUTF();
+            System.out.println("EL MENSAJE: "+mensaje);
+            if(mensaje.equals("true")){
+                JOptionPane.showMessageDialog(null, "Bienvenido");
+                login1.setVisible(false);
+                jDialogNuevoUsuario.setLocationRelativeTo(null);
+                jDialogNuevoUsuario.setVisible(true);
+            } else 
+                JOptionPane.showMessageDialog(null, "ERROR");            
+            
+        } catch (IOException ex) {
+            Logger.getLogger(VentanaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
 }
