@@ -48,12 +48,12 @@ public class HiloLogin extends Thread{
             while (rset.next()) {
                 admin = rset.getBoolean("administrador");            
             }
+            
+            
+            fsalida.writeUTF((admin)? "true":"false");
+            
         } catch (SQLException ex) {
             ex.printStackTrace();
-        }
-        
-        try {
-            fsalida.writeUTF((admin)? "true":"false");
         } catch (IOException ex) {
             Logger.getLogger(HiloLogin.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -69,7 +69,7 @@ public class HiloLogin extends Thread{
             md= MessageDigest.getInstance("SHA-512");
             md.update(password.getBytes());
             mb = md.digest();
-            System.out.println(String.valueOf(Hex.encodeHex(mb)));
+            //System.out.println(String.valueOf(Hex.encodeHex(mb)));
             
         } catch (NoSuchAlgorithmException e) {
             //Error

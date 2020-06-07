@@ -5,19 +5,29 @@
  */
 package escritorio;
 
+import java.awt.Component;
+import java.awt.event.ActionListener;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.util.Scanner;
+import java.sql.Date;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JOptionPane;
-import org.apache.commons.codec.binary.Hex;
+import javax.swing.JTable;
+import javax.swing.table.AbstractTableModel;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellRenderer;
+import modelo.Cliente;
+import modelo.PistaDisponible;
+import modelo.Reserva;
 
 /**
  *
@@ -28,27 +38,269 @@ public class VentanaPrincipal extends javax.swing.JFrame {
     /**
      * Creates new form VentanaPrincipal
      */
-    
-    String host = "localhost";
-    int puerto = 4444;
-    DataOutputStream flujosalida = null;
-    DataInputStream flujoentrada = null;
-    Socket socket = null;
-            
-            
+    private String host = "localhost";
+    private int puerto = 4444;
+    private DataOutputStream flujosalida = null;
+    private DataInputStream flujoentrada = null;
+    private Socket socket = null;
+    private boolean tabla_clientes_seleccionada;
+    private ModeloTablaClientes modeloTablaClientes;
+    private ModeloTablaReservas modeloTablaReservas;
+    private ModeloTablaDisponibilidad modeloTablaDisponibilidad;
+    private boolean logeado;
+    private PistaDisponible pistaEscogida;
+    private Cliente clienteReserva;
+
     public VentanaPrincipal() {
+        this.tabla_clientes_seleccionada = true;
+        this.logeado = false;
+        this.modeloTablaClientes = new ModeloTablaClientes();
+        this.modeloTablaReservas = new ModeloTablaReservas();
+        this.modeloTablaDisponibilidad = new ModeloTablaDisponibilidad();
+        this.pistaEscogida = new PistaDisponible();
+        this.clienteReserva = new Cliente();
+
         try {
             socket = new Socket(host, puerto);
             flujosalida = new DataOutputStream(socket.getOutputStream());
             flujoentrada = new DataInputStream(socket.getInputStream());
             System.out.println(flujoentrada.readUTF());
-            
+
             initComponents();
-            
-        } catch (IOException ex) {            
-            JOptionPane.showMessageDialog(null, "No se ha podido establecer la conexión", "ERROR", 
-                        JOptionPane.ERROR_MESSAGE);
+
+        } catch (IOException ex) {
+            JOptionPane.showMessageDialog(null, "No se ha podido establecer la conexión", "ERROR",
+                    JOptionPane.ERROR_MESSAGE);
             System.exit(0);
+        }
+    }
+
+    class ModeloTablaClientes extends AbstractTableModel {
+
+        String[] columnNames = {"NOMBRE",
+            "APELLIDOS",
+            "CORREO",
+            "BORRAR"};
+
+        private Object[][] data = {};
+
+        @Override
+        public int getRowCount() {
+            return data.length;
+        }
+
+        @Override
+        public int getColumnCount() {
+            return columnNames.length;
+        }
+
+        //@Override
+        public Object getValueAt(int rowIndex, int columnIndex) {
+            return data[rowIndex][columnIndex];
+        }
+
+        @Override
+        public String getColumnName(int c) {
+            return columnNames[c];
+        }
+
+        @Override
+        public Class getColumnClass(int colum) {
+            return getValueAt(0, colum).getClass();
+        }
+
+        public void refreshTableModel(List<Cliente> lista) {
+
+            if (!lista.isEmpty()) {
+                int numCol = columnNames.length + 1;
+                int numFilas = lista.size();
+
+                data = new Object[numFilas][numCol];
+                ImageIcon icono = new ImageIcon("icon.png");
+                ImageIcon iconoEscala = new ImageIcon(icono.getImage().getScaledInstance(18, -1, java.awt.Image.SCALE_DEFAULT));
+
+                for (int i = 0; i < numFilas; i++) {
+                    data[i][0] = lista.get(i).getNombre();
+                    data[i][1] = lista.get(i).getApellidos();
+                    data[i][2] = lista.get(i).getCorreo();
+                    data[i][3] = new JButton(iconoEscala);
+                    data[i][4] = lista.get(i);
+                    final Cliente c = lista.get(i);
+                    ((JButton) data[i][3]).addActionListener(new ActionListener() {
+                        @Override
+                        public void actionPerformed(java.awt.event.ActionEvent evt) {
+                            int opcion = JOptionPane.showConfirmDialog(null, "¿Quiéres borrar al cliente: " + c.getNombre() + "?",
+                                    "",
+                                    JOptionPane.YES_NO_OPTION,
+                                    JOptionPane.QUESTION_MESSAGE);
+                            if (opcion == JOptionPane.YES_OPTION) {
+                                borrarCliente(c);
+                                refrescarTable();
+                            } else if (opcion == JOptionPane.NO_OPTION) {
+                                JOptionPane.showMessageDialog(null, "No hemos borrado a" + c.getNombre() + ".", "Error", JOptionPane.ERROR_MESSAGE);
+                            }
+                        }
+                    });
+                }
+            } else {
+                data = new Object[0][0];
+            }
+
+            fireTableDataChanged();
+        }
+
+    }
+
+    class ModeloTablaReservas extends AbstractTableModel {
+
+        String[] columnNames = {"USUARIO",
+            "PISTA",
+            "HORARIO",
+            "FECHA",
+            "JUGADORES",
+            "BORRAR"};
+
+        private Object[][] data = {};
+
+        @Override
+        public int getRowCount() {
+            return data.length;
+        }
+
+        @Override
+        public int getColumnCount() {
+            return columnNames.length;
+        }
+
+        //@Override
+        public Object getValueAt(int rowIndex, int columnIndex) {
+            return data[rowIndex][columnIndex];
+        }
+
+        @Override
+        public String getColumnName(int c) {
+            return columnNames[c];
+        }
+
+        @Override
+        public Class getColumnClass(int colum) {
+            return getValueAt(0, colum).getClass();
+        }
+
+        public void refreshTableModel(List<Reserva> lista) {
+
+            if (!lista.isEmpty()) {
+                int numCol = columnNames.length + 1;
+                int numFilas = lista.size();
+
+                data = new Object[numFilas][numCol];
+                ImageIcon icono = new ImageIcon("icon.png");
+                ImageIcon iconoEscala = new ImageIcon(icono.getImage().getScaledInstance(18, -1, java.awt.Image.SCALE_DEFAULT));
+
+                for (int i = 0; i < numFilas; i++) {
+                    data[i][0] = lista.get(i).getNombre();
+                    data[i][1] = lista.get(i).getPista();
+                    data[i][2] = lista.get(i).getHorario();
+                    data[i][3] = lista.get(i).getFecha();
+                    data[i][4] = lista.get(i).getJugadores();
+                    data[i][5] = new JButton(iconoEscala);
+                    data[i][6] = lista.get(i);
+                    final Reserva r = lista.get(i);
+                    ((JButton) data[i][5]).addActionListener(new ActionListener() {
+                        @Override
+                        public void actionPerformed(java.awt.event.ActionEvent evt) {
+                            int opcion = JOptionPane.showConfirmDialog(null, "¿Quiéres borrar la reserva de: " + r.getNombre() + "?",
+                                    "",
+                                    JOptionPane.YES_NO_OPTION,
+                                    JOptionPane.QUESTION_MESSAGE);
+                            if (opcion == JOptionPane.YES_OPTION) {
+                                borrarReserva(r);
+                                refrescarTable();
+                            } else if (opcion == JOptionPane.NO_OPTION) {
+                                JOptionPane.showMessageDialog(null, "No hemos la reserva de " + r.getNombre() + ".", "Error", JOptionPane.ERROR_MESSAGE);
+                            }
+                        }
+                    });
+                }
+            } else {
+                data = new Object[0][0];
+            }
+
+            fireTableDataChanged();
+        }
+
+    }
+
+    class ModeloTablaDisponibilidad extends AbstractTableModel {
+
+        String[] columnNames = {"PISTA",
+            "HORARIO"};
+
+        private Object[][] data = {};
+
+        @Override
+        public int getRowCount() {
+            return data.length;
+        }
+
+        @Override
+        public int getColumnCount() {
+            return columnNames.length;
+        }
+
+        @Override
+        public Object getValueAt(int rowIndex, int columnIndex) {
+            return data[rowIndex][columnIndex];
+        }
+
+        @Override
+        public String getColumnName(int c) {
+            return columnNames[c];
+        }
+
+        public void refreshTableModel(List<PistaDisponible> lista) {
+
+            if (!lista.isEmpty()) {
+                int numCol = columnNames.length + 1;
+                int numFilas = lista.size();
+
+                data = new Object[numFilas][numCol];
+                int i = 0;
+                for (PistaDisponible p : lista) {
+                    data[i][0] = p.getId_pista();
+                    data[i][1] = p.getFranja();
+                    data[i][2] = p;
+                    final PistaDisponible pista = p;
+                    System.out.println(pista.toString());
+                    i++;
+                }
+            } else {
+                data = new Object[0][0];
+            }
+
+            //fireTableDataChanged();
+        }
+
+    }
+
+    private void refrescarTable() {
+        if (tabla_clientes_seleccionada) {
+            modeloTablaClientes.refreshTableModel(getClientes());
+            jTable.setModel(modeloTablaClientes);
+        } else {
+            modeloTablaReservas.refreshTableModel(getReservas());
+            jTable.setModel(modeloTablaReservas);
+        }
+        TableCellRenderer buttonRenderer = new JTableButtonRenderer();
+        jTable.getColumn("BORRAR").setCellRenderer(buttonRenderer);
+    }
+
+    private static class JTableButtonRenderer implements TableCellRenderer {
+
+        @Override
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+            JButton button = (JButton) value;
+            return button;
         }
     }
 
@@ -62,22 +314,15 @@ public class VentanaPrincipal extends javax.swing.JFrame {
     private void initComponents() {
 
         jDialogNuevoUsuario = new javax.swing.JDialog();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        jPanelJDScroable = new javax.swing.JPanel();
-        jLabel2 = new javax.swing.JLabel();
-        jLabel3 = new javax.swing.JLabel();
-        jTextFieldNombre = new javax.swing.JTextField();
-        jLabel4 = new javax.swing.JLabel();
-        jTextFieldApellidos = new javax.swing.JTextField();
-        jLabel5 = new javax.swing.JLabel();
-        jTextFieldCorreo = new javax.swing.JTextField();
-        jLabel6 = new javax.swing.JLabel();
-        jTextFieldPwd1 = new javax.swing.JTextField();
-        jLabel7 = new javax.swing.JLabel();
-        jTextFieldPwd2 = new javax.swing.JTextField();
-        jButtonNuevoUsuario = new javax.swing.JButton();
+        nuevoUsuario = new escritorio.NuevoUsuario();
         jDialogLogin = new javax.swing.JDialog();
-        login1 = new escritorio.Login();
+        login = new escritorio.Login();
+        jDialogNuevoPartido = new javax.swing.JDialog();
+        nuevoPartido = new escritorio.NuevoPartido();
+        jMenu1 = new javax.swing.JMenu();
+        jDialogDisponibilidad = new javax.swing.JDialog();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jTableDisponibilidad = new javax.swing.JTable();
         jPanelVentanaPrincipal = new javax.swing.JPanel();
         jLabelMuvon = new javax.swing.JLabel();
         jButtonReservas = new javax.swing.JButton();
@@ -88,126 +333,105 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         jTextFieldBarraBusqueda = new javax.swing.JTextField();
         jButtonBuscar = new javax.swing.JButton();
         jScrollPane2 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        jTable = new javax.swing.JTable();
+        jMenuBar1 = new javax.swing.JMenuBar();
+        jMenu = new javax.swing.JMenu();
+        jMenuItemCerrarSesion = new javax.swing.JMenuItem();
 
-        jLabel2.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
-        jLabel2.setText("INSERTAR NUEVO USUARIO");
+        jDialogNuevoUsuario.setTitle("Nuevo Usuario");
+        jDialogNuevoUsuario.setModal(true);
+        jDialogNuevoUsuario.setResizable(false);
 
-        jLabel3.setText("Nombre ");
-
-        jLabel4.setText("Apellidos");
-
-        jLabel5.setText("Correo");
-
-        jLabel6.setText("Contraseña");
-
-        jLabel7.setText("Repetir");
-
-        jButtonNuevoUsuario.setText("Crear usuario");
-        jButtonNuevoUsuario.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButtonNuevoUsuarioActionPerformed(evt);
-            }
-        });
-
-        javax.swing.GroupLayout jPanelJDScroableLayout = new javax.swing.GroupLayout(jPanelJDScroable);
-        jPanelJDScroable.setLayout(jPanelJDScroableLayout);
-        jPanelJDScroableLayout.setHorizontalGroup(
-            jPanelJDScroableLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanelJDScroableLayout.createSequentialGroup()
-                .addContainerGap(51, Short.MAX_VALUE)
-                .addGroup(jPanelJDScroableLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanelJDScroableLayout.createSequentialGroup()
-                        .addGroup(jPanelJDScroableLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jLabel2)
-                            .addGroup(jPanelJDScroableLayout.createSequentialGroup()
-                                .addGroup(jPanelJDScroableLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(jPanelJDScroableLayout.createSequentialGroup()
-                                        .addGap(4, 4, 4)
-                                        .addGroup(jPanelJDScroableLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addComponent(jLabel4)
-                                            .addComponent(jLabel5)
-                                            .addComponent(jLabel6)
-                                            .addComponent(jLabel7)))
-                                    .addComponent(jLabel3))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addGroup(jPanelJDScroableLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jTextFieldCorreo)
-                                    .addComponent(jTextFieldApellidos)
-                                    .addComponent(jTextFieldPwd1)
-                                    .addComponent(jTextFieldNombre, javax.swing.GroupLayout.PREFERRED_SIZE, 189, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jTextFieldPwd2, javax.swing.GroupLayout.PREFERRED_SIZE, 189, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                        .addGap(47, 47, 47))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanelJDScroableLayout.createSequentialGroup()
-                        .addComponent(jButtonNuevoUsuario)
-                        .addGap(131, 131, 131))))
-        );
-        jPanelJDScroableLayout.setVerticalGroup(
-            jPanelJDScroableLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanelJDScroableLayout.createSequentialGroup()
-                .addGap(29, 29, 29)
-                .addComponent(jLabel2)
-                .addGap(35, 35, 35)
-                .addGroup(jPanelJDScroableLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel3)
-                    .addComponent(jTextFieldNombre, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(23, 23, 23)
-                .addGroup(jPanelJDScroableLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel4)
-                    .addComponent(jTextFieldApellidos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(25, 25, 25)
-                .addGroup(jPanelJDScroableLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel5)
-                    .addComponent(jTextFieldCorreo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(24, 24, 24)
-                .addGroup(jPanelJDScroableLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel6)
-                    .addComponent(jTextFieldPwd1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(26, 26, 26)
-                .addGroup(jPanelJDScroableLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel7)
-                    .addComponent(jTextFieldPwd2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(50, 50, 50)
-                .addComponent(jButtonNuevoUsuario)
-                .addContainerGap(151, Short.MAX_VALUE))
-        );
-
-        jScrollPane1.setViewportView(jPanelJDScroable);
+        nuevoUsuario.setParent(this);
 
         javax.swing.GroupLayout jDialogNuevoUsuarioLayout = new javax.swing.GroupLayout(jDialogNuevoUsuario.getContentPane());
         jDialogNuevoUsuario.getContentPane().setLayout(jDialogNuevoUsuarioLayout);
         jDialogNuevoUsuarioLayout.setHorizontalGroup(
             jDialogNuevoUsuarioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 378, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(nuevoUsuario, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
         jDialogNuevoUsuarioLayout.setVerticalGroup(
             jDialogNuevoUsuarioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 534, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(nuevoUsuario, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
 
-        jDialogLogin.setMaximumSize(new java.awt.Dimension(334, 300));
-        jDialogLogin.setMinimumSize(new java.awt.Dimension(334, 300));
+        jDialogLogin.setTitle("Login");
+        jDialogLogin.setMinimumSize(new java.awt.Dimension(325, 260));
         jDialogLogin.setModal(true);
         jDialogLogin.setResizable(false);
 
-        login1.setParent(this);
+        login.setParent(this);
 
         javax.swing.GroupLayout jDialogLoginLayout = new javax.swing.GroupLayout(jDialogLogin.getContentPane());
         jDialogLogin.getContentPane().setLayout(jDialogLoginLayout);
         jDialogLoginLayout.setHorizontalGroup(
             jDialogLoginLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(login1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(login, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
         jDialogLoginLayout.setVerticalGroup(
             jDialogLoginLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(login1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(login, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+        );
+
+        jDialogNuevoPartido.setMaximumSize(new java.awt.Dimension(345, 352));
+        jDialogNuevoPartido.setMinimumSize(new java.awt.Dimension(345, 352));
+
+        nuevoPartido.setParent(this);
+
+        javax.swing.GroupLayout jDialogNuevoPartidoLayout = new javax.swing.GroupLayout(jDialogNuevoPartido.getContentPane());
+        jDialogNuevoPartido.getContentPane().setLayout(jDialogNuevoPartidoLayout);
+        jDialogNuevoPartidoLayout.setHorizontalGroup(
+            jDialogNuevoPartidoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jDialogNuevoPartidoLayout.createSequentialGroup()
+                .addComponent(nuevoPartido, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
+        );
+        jDialogNuevoPartidoLayout.setVerticalGroup(
+            jDialogNuevoPartidoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jDialogNuevoPartidoLayout.createSequentialGroup()
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addComponent(nuevoPartido, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+        );
+
+        jMenu1.setText("jMenu1");
+
+        jDialogDisponibilidad.setTitle("Escoge un horario");
+
+        jScrollPane1.setMinimumSize(new java.awt.Dimension(302, 300));
+        jScrollPane1.setName(""); // NOI18N
+        jScrollPane1.setOpaque(false);
+        jScrollPane1.setPreferredSize(new java.awt.Dimension(302, 300));
+
+        jTableDisponibilidad.setModel(modeloTablaDisponibilidad);
+        jTableDisponibilidad.setMaximumSize(new java.awt.Dimension(2147483647, 2147483647));
+        jTableDisponibilidad.setMinimumSize(new java.awt.Dimension(302, 300));
+        jTableDisponibilidad.setName(""); // NOI18N
+        jTableDisponibilidad.setPreferredSize(new java.awt.Dimension(302, 300));
+        jTableDisponibilidad.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jTableDisponibilidadMouseClicked(evt);
+            }
+        });
+        jScrollPane1.setViewportView(jTableDisponibilidad);
+
+        javax.swing.GroupLayout jDialogDisponibilidadLayout = new javax.swing.GroupLayout(jDialogDisponibilidad.getContentPane());
+        jDialogDisponibilidad.getContentPane().setLayout(jDialogDisponibilidadLayout);
+        jDialogDisponibilidadLayout.setHorizontalGroup(
+            jDialogDisponibilidadLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 375, Short.MAX_VALUE)
+        );
+        jDialogDisponibilidadLayout.setVerticalGroup(
+            jDialogDisponibilidadLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jDialogDisponibilidadLayout.createSequentialGroup()
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 242, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         jPanelVentanaPrincipal.setBackground(new java.awt.Color(61, 138, 247));
 
-        jLabelMuvon.setFont(new java.awt.Font("Roboto Medium", 1, 48)); // NOI18N
+        jLabelMuvon.setFont(new java.awt.Font("Roboto Medium", 1, 64)); // NOI18N
         jLabelMuvon.setForeground(new java.awt.Color(255, 255, 255));
         jLabelMuvon.setText("MUVON");
 
@@ -223,17 +447,33 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         jButtonClientes.setBackground(new java.awt.Color(187, 187, 187));
         jButtonClientes.setForeground(new java.awt.Color(0, 0, 0));
         jButtonClientes.setText("Clientes");
+        jButtonClientes.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonClientesActionPerformed(evt);
+            }
+        });
 
         jButtonAñadirPartido.setBackground(new java.awt.Color(187, 187, 187));
         jButtonAñadirPartido.setForeground(new java.awt.Color(0, 0, 0));
         jButtonAñadirPartido.setText("Añadir Partido");
+        jButtonAñadirPartido.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonAñadirPartidoActionPerformed(evt);
+            }
+        });
 
         jButtonAñadirCliente.setBackground(new java.awt.Color(187, 187, 187));
         jButtonAñadirCliente.setForeground(new java.awt.Color(0, 0, 0));
         jButtonAñadirCliente.setText("Añadir Cliente");
+        jButtonAñadirCliente.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonAñadirClienteActionPerformed(evt);
+            }
+        });
 
+        jLabelTitulo.setFont(new java.awt.Font("Chandas", 1, 24)); // NOI18N
         jLabelTitulo.setForeground(new java.awt.Color(0, 0, 0));
-        jLabelTitulo.setText("TITULO PESTAÑA ACTUAL");
+        jLabelTitulo.setText("Clientes");
 
         jButtonBuscar.setText("Buscar");
         jButtonBuscar.addActionListener(new java.awt.event.ActionListener() {
@@ -242,7 +482,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
             }
         });
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        jTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
                 {null, null, null, null},
@@ -253,7 +493,12 @@ public class VentanaPrincipal extends javax.swing.JFrame {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
-        jScrollPane2.setViewportView(jTable1);
+        jTable.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jTableMouseClicked(evt);
+            }
+        });
+        jScrollPane2.setViewportView(jTable);
 
         javax.swing.GroupLayout jPanelVentanaPrincipalLayout = new javax.swing.GroupLayout(jPanelVentanaPrincipal);
         jPanelVentanaPrincipal.setLayout(jPanelVentanaPrincipalLayout);
@@ -266,7 +511,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
                         .addGroup(jPanelVentanaPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanelVentanaPrincipalLayout.createSequentialGroup()
                                 .addComponent(jLabelMuvon)
-                                .addGap(234, 234, 234)
+                                .addGap(215, 215, 215)
                                 .addComponent(jLabelTitulo))
                             .addGroup(jPanelVentanaPrincipalLayout.createSequentialGroup()
                                 .addGroup(jPanelVentanaPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -283,30 +528,53 @@ public class VentanaPrincipal extends javax.swing.JFrame {
                         .addComponent(jButtonBuscar)))
                 .addContainerGap(53, Short.MAX_VALUE))
         );
+
+        jPanelVentanaPrincipalLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {jButtonAñadirCliente, jButtonAñadirPartido, jButtonClientes, jButtonReservas});
+
         jPanelVentanaPrincipalLayout.setVerticalGroup(
             jPanelVentanaPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanelVentanaPrincipalLayout.createSequentialGroup()
-                .addGap(71, 71, 71)
-                .addGroup(jPanelVentanaPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabelMuvon)
-                    .addComponent(jLabelTitulo))
-                .addGap(18, 18, 18)
+                .addGroup(jPanelVentanaPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanelVentanaPrincipalLayout.createSequentialGroup()
+                        .addGap(71, 71, 71)
+                        .addComponent(jLabelMuvon))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanelVentanaPrincipalLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jLabelTitulo)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanelVentanaPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jTextFieldBarraBusqueda, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jButtonBuscar))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 34, Short.MAX_VALUE)
                 .addGroup(jPanelVentanaPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanelVentanaPrincipalLayout.createSequentialGroup()
-                        .addComponent(jButtonReservas)
-                        .addGap(26, 26, 26)
+                        .addGap(11, 11, 11)
                         .addComponent(jButtonClientes)
-                        .addGap(27, 27, 27)
+                        .addGap(26, 26, 26)
+                        .addComponent(jButtonReservas)
+                        .addGap(28, 28, 28)
                         .addComponent(jButtonAñadirPartido)
                         .addGap(27, 27, 27)
                         .addComponent(jButtonAñadirCliente))
                     .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 375, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(49, 49, 49))
         );
+
+        jPanelVentanaPrincipalLayout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {jButtonAñadirCliente, jButtonAñadirPartido, jButtonClientes, jButtonReservas});
+
+        jMenu.setText("Opciones");
+
+        jMenuItemCerrarSesion.setText("Cerrar sesión");
+        jMenuItemCerrarSesion.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItemCerrarSesionActionPerformed(evt);
+            }
+        });
+        jMenu.add(jMenuItemCerrarSesion);
+
+        jMenuBar1.add(jMenu);
+
+        setJMenuBar(jMenuBar1);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -324,48 +592,88 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButtonNuevoUsuarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonNuevoUsuarioActionPerformed
-        // TODO add your handling code here:
-        String nombre = jTextFieldNombre.getText();
-        String apellidos = jTextFieldApellidos.getText();
-        String pwd = jTextFieldPwd1.getText();
-        
-        Pattern pattern = Pattern.compile("^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$");
-        String email = jTextFieldCorreo.getText();
-        Matcher mather = pattern.matcher(email);
-
-        if (mather.find() == true) {
-            if (pwd.equals(jTextFieldPwd2.getText())){
-                try {
-                    flujosalida.writeUTF("2,"+nombre+","+apellidos+","+email+","+pwd);
-                    String mensaje = "";
-                    mensaje = flujoentrada.readUTF();
-                    System.out.println("EL MENSAJE: "+mensaje);
-                    if(mensaje.equals("true")){
-                        JOptionPane.showMessageDialog(null, "Usuario creado");
-                } else 
-                    JOptionPane.showMessageDialog(null, "ERROR");            
-            
-                } catch (IOException ex) {
-                    Logger.getLogger(VentanaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            }else
-                JOptionPane.showMessageDialog(null, "Las contraseñas no coinciden", "ERROR", 
-                        JOptionPane.ERROR_MESSAGE);
-        } else 
-            JOptionPane.showMessageDialog(null, "El email introducido no es válido", "ERROR", 
-                        JOptionPane.ERROR_MESSAGE);
-        
-       
-    }//GEN-LAST:event_jButtonNuevoUsuarioActionPerformed
-
     private void jButtonReservasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonReservasActionPerformed
         // TODO add your handling code here:
+        this.tabla_clientes_seleccionada = false;
+        jLabelTitulo.setText("Reservas");
+        refrescarTable();
     }//GEN-LAST:event_jButtonReservasActionPerformed
 
     private void jButtonBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonBuscarActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_jButtonBuscarActionPerformed
+
+    private void jButtonAñadirClienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonAñadirClienteActionPerformed
+        limpiarNuevoUsuario();
+
+        jDialogNuevoUsuario.setSize(384, 720);
+        jDialogNuevoUsuario.setLocationRelativeTo(null);
+        jDialogNuevoUsuario.setVisible(true);
+    }//GEN-LAST:event_jButtonAñadirClienteActionPerformed
+
+    private void jButtonAñadirPartidoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonAñadirPartidoActionPerformed
+        try {
+            String emailReserva = JOptionPane.showInputDialog("Email del usuario");
+            flujosalida.writeUTF("3," + emailReserva);
+            String mensaje = flujoentrada.readUTF();
+
+            if (!emailReserva.equals("")) {
+                clienteReserva = new Cliente(mensaje + "," + emailReserva);
+
+                if (mensaje.equals("No se ha encontrado ningún usuario con ese nombre")) {
+                    JOptionPane.showMessageDialog(null, "El email introducido no es válido", "ERROR",
+                            JOptionPane.ERROR_MESSAGE);
+                } else {
+                    if (JOptionPane.showConfirmDialog(null, "La reserva se hará a nombre de: " + clienteReserva.getNombre() + " " + clienteReserva.getApellidos() + ", estás de acuerdo?", "ADVERTENCIA",
+                            JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+                        limpiarNuevoPartido();
+                        jDialogNuevoPartido.setSize(345, 352);
+                        jDialogNuevoPartido.setLocationRelativeTo(null);
+                        jDialogNuevoPartido.setVisible(true);
+                    } else {
+                        emailReserva = "";
+                    }
+                }
+            }
+        } catch (IOException ex) {
+            Logger.getLogger(VentanaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_jButtonAñadirPartidoActionPerformed
+
+    private void jButtonClientesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonClientesActionPerformed
+        // TODO add your handling code here:
+        tabla_clientes_seleccionada = true;
+        jLabelTitulo.setText("Clientes");
+        refrescarTable();
+    }//GEN-LAST:event_jButtonClientesActionPerformed
+
+    private void jTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTableMouseClicked
+        // TODO add your handling code here:
+        int column = jTable.getColumnModel().getColumnIndexAtX(evt.getX()); // get the coloum of the button
+        int row = evt.getY() / jTable.getRowHeight(); //get the row of the button
+
+        /*Checking the row or column is valid or not*/
+        if (row < jTable.getRowCount() && row >= 0 && column < jTable.getColumnCount() && column >= 0) {
+            Object value = jTable.getValueAt(row, column);
+            if (value instanceof JButton) {
+                ((JButton) value).doClick();
+                refrescarTable();
+            }
+        }
+    }//GEN-LAST:event_jTableMouseClicked
+
+    private void jMenuItemCerrarSesionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemCerrarSesionActionPerformed
+        logeado = false;
+        solicitarLogin();
+    }//GEN-LAST:event_jMenuItemCerrarSesionActionPerformed
+
+    private void jTableDisponibilidadMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTableDisponibilidadMouseClicked
+        int row = evt.getY() / jTableDisponibilidad.getRowHeight(); //get the row of the button
+
+        pistaEscogida = (PistaDisponible) modeloTablaDisponibilidad.getValueAt(row, 2);
+        nuevoPartido.getjButtonReservar().setEnabled(true);
+        jDialogDisponibilidad.setVisible(false);
+    }//GEN-LAST:event_jTableDisponibilidadMouseClicked
 
     /**
      * @param args the command line arguments
@@ -376,7 +684,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html
-        */
+         */
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
                 if ("Nimbus".equals(info.getName())) {
@@ -404,10 +712,11 @@ public class VentanaPrincipal extends javax.swing.JFrame {
                 VentanaPrincipal v1 = new VentanaPrincipal();
                 v1.setLocationRelativeTo(null);
                 v1.setVisible(true);
-                
+
+                v1.solicitarLogin();
             }
         });
-                       
+
         //</editor-fold>
     }
 
@@ -416,49 +725,314 @@ public class VentanaPrincipal extends javax.swing.JFrame {
     private javax.swing.JButton jButtonAñadirPartido;
     private javax.swing.JButton jButtonBuscar;
     private javax.swing.JButton jButtonClientes;
-    private javax.swing.JButton jButtonNuevoUsuario;
     private javax.swing.JButton jButtonReservas;
+    private javax.swing.JDialog jDialogDisponibilidad;
     private javax.swing.JDialog jDialogLogin;
+    private javax.swing.JDialog jDialogNuevoPartido;
     private javax.swing.JDialog jDialogNuevoUsuario;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel5;
-    private javax.swing.JLabel jLabel6;
-    private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabelMuvon;
     private javax.swing.JLabel jLabelTitulo;
-    private javax.swing.JPanel jPanelJDScroable;
+    private javax.swing.JMenu jMenu;
+    private javax.swing.JMenu jMenu1;
+    private javax.swing.JMenuBar jMenuBar1;
+    private javax.swing.JMenuItem jMenuItemCerrarSesion;
     private javax.swing.JPanel jPanelVentanaPrincipal;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JTable jTable1;
-    private javax.swing.JTextField jTextFieldApellidos;
+    private javax.swing.JTable jTable;
+    private javax.swing.JTable jTableDisponibilidad;
     private javax.swing.JTextField jTextFieldBarraBusqueda;
-    private javax.swing.JTextField jTextFieldCorreo;
-    private javax.swing.JTextField jTextFieldNombre;
-    private javax.swing.JTextField jTextFieldPwd1;
-    private javax.swing.JTextField jTextFieldPwd2;
-    private escritorio.Login login1;
+    private escritorio.Login login;
+    private escritorio.NuevoPartido nuevoPartido;
+    private escritorio.NuevoUsuario nuevoUsuario;
     // End of variables declaration//GEN-END:variables
+
+    private void solicitarLogin() {
+        jTable.setModel(new DefaultTableModel());
+        this.login.getjTextFieldContrasena().setText("");
+        while (!logeado) {
+            mostrarLogin();
+        }
+        refrescarTable();
+    }
+
+    private void mostrarLogin() {
+        jDialogLogin.setLocationRelativeTo(null);
+        jDialogLogin.setVisible(true);
+    }
+
+    public void crearUsuario() {
+        String nombre = nuevoUsuario.getNombre().getText();
+        String apellidos = nuevoUsuario.getApellidos().getText();
+        String pwd = nuevoUsuario.getPwd1().getText();
+
+        Pattern pattern = Pattern.compile("^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$");
+        String email = nuevoUsuario.getCorreo().getText();
+        Matcher mather = pattern.matcher(email);
+
+        int sexo = (nuevoUsuario.isjRadioButtonHSelected()) ? 0 : 1;
+
+        int nivelFutbol = nuevoUsuario.getjSliderFutbol().getValue();
+        int nivelPadel = nuevoUsuario.getjSliderPadel().getValue();
+        int nivelBasket = nuevoUsuario.getjSliderBasket().getValue();
+        int nivelBalonmano = nuevoUsuario.getjSliderBalonmano().getValue();
+
+        if (mather.find() == true) {
+            if (pwd.equals(nuevoUsuario.getPwd2().getText())) {
+                try {
+                    flujosalida.writeUTF("2," + nombre + "," + apellidos + "," + email + "," + pwd + "," + sexo + "," + nivelFutbol
+                            + "," + nivelPadel + "," + nivelBasket + "," + nivelBalonmano);
+                    String mensaje = "";
+                    mensaje = flujoentrada.readUTF();
+                    System.out.println("EL MENSAJE: " + mensaje);
+                    if (mensaje.equals("Insertado nuevo usuario correctamente")) {
+                        JOptionPane.showMessageDialog(null, "Usuario creado");
+                        cerrarCreacionUsuario();
+                    } else if (mensaje.equals("Correo repetido")) {
+                        JOptionPane.showMessageDialog(null, "El email introducido está repetido", "ERROR",
+                                JOptionPane.ERROR_MESSAGE);
+                    } else {
+                        JOptionPane.showMessageDialog(null, "", "ERROR",
+                                JOptionPane.ERROR_MESSAGE);
+                    }
+
+                } catch (IOException ex) {
+                    Logger.getLogger(VentanaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            } else {
+                JOptionPane.showMessageDialog(null, "Las contraseñas no coinciden", "ERROR",
+                        JOptionPane.ERROR_MESSAGE);
+            }
+        } else {
+            JOptionPane.showMessageDialog(null, "El email introducido no es válido", "ERROR",
+                    JOptionPane.ERROR_MESSAGE);
+        }
+    }
 
     public void hacerLogin() {
         try {
-            flujosalida.writeUTF("1,"+login1.getCorreo()+","+login1.getPwd());
+            flujosalida.writeUTF("1," + login.getCorreo() + "," + login.getPwd());
             String mensaje = "";
             mensaje = flujoentrada.readUTF();
-            System.out.println("EL MENSAJE: "+mensaje);
-            if(mensaje.equals("true")){
+            System.out.println("EL MENSAJE: " + mensaje);
+            if (mensaje.equals("true")) {
                 JOptionPane.showMessageDialog(null, "Bienvenido");
-                login1.setVisible(false);
-                jDialogNuevoUsuario.setLocationRelativeTo(null);
-                jDialogNuevoUsuario.setVisible(true);
-            } else 
-                JOptionPane.showMessageDialog(null, "ERROR");            
-            
+                logeado = true;
+                jDialogLogin.setVisible(false);
+            } else {
+                JOptionPane.showMessageDialog(null, "ERROR");
+            }
+
         } catch (IOException ex) {
             Logger.getLogger(VentanaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
+
+    public void cerrarCreacionPartido() {
+        jDialogDisponibilidad.setVisible(false);
+        jDialogNuevoPartido.setVisible(false);
+    }
+
+    public void cerrarCreacionUsuario() {
+        jDialogNuevoUsuario.setVisible(false);
+    }
+
+    private List<Cliente> getClientes() {
+        List<Cliente> lista = new ArrayList<>();
+        String[] mensajes = null;
+        try {
+            flujosalida.writeUTF("4,");
+
+            String mensaje = "";
+            mensaje = flujoentrada.readUTF();
+            if (mensaje.equals("No se han encontrado clientes almacenados")) {
+                JOptionPane.showMessageDialog(null, "No se han encontrado clientes almacenados");
+            } else {
+                mensajes = mensaje.split(";");
+                for (String arg : mensajes) {
+                    lista.add(new Cliente(arg));
+                }
+            }
+            return lista;
+        } catch (IOException ex) {
+            Logger.getLogger(VentanaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
+    }
+
+    private List<Reserva> getReservas() {
+        List<Reserva> lista = new ArrayList<>();
+        String[] mensajes = null;
+        try {
+            flujosalida.writeUTF("6,");
+
+            String mensaje = "";
+            mensaje = flujoentrada.readUTF();
+            if (mensaje.equals("No se han encontrado reservas almacenadas")) {
+                JOptionPane.showMessageDialog(null, "No se han encontrado reservas almacenadas");
+            } else {
+                mensajes = mensaje.split(";");
+                for (String arg : mensajes) {
+                    lista.add(new Reserva(arg));
+                }
+            }
+            return lista;
+        } catch (IOException ex) {
+            Logger.getLogger(VentanaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
+    }
+
+    private void borrarCliente(Cliente c) {
+        try {
+            flujosalida.writeUTF("5," + c.getCorreo());
+            String mensaje = flujoentrada.readUTF();
+            if (mensaje.equals("OK")) {
+                JOptionPane.showMessageDialog(null, "Se ha borrado el cliente correctamente");
+            } else {
+                JOptionPane.showMessageDialog(null, "Error al borrar el cliente");
+            }
+        } catch (IOException ex) {
+            Logger.getLogger(VentanaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        refrescarTable();
+    }
+
+    private void borrarReserva(Reserva r) {
+        try {
+            flujosalida.writeUTF("7," + r.getId());
+            String mensaje = flujoentrada.readUTF();
+            if (mensaje.equals("OK")) {
+                JOptionPane.showMessageDialog(null, "Se ha borrado la reserva correctamente");
+            } else {
+                JOptionPane.showMessageDialog(null, "Error al borrar la reserva");
+            }
+        } catch (IOException ex) {
+            Logger.getLogger(VentanaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        refrescarTable();
+    }
+
+    private List<PistaDisponible> getDisponibilidad(int deporte_id, Date date) {
+        List<PistaDisponible> listaPistasOcupadas = new ArrayList<>();
+        List<PistaDisponible> lista = new ArrayList<>();
+        String[] mensajes = null;
+        try {
+            flujosalida.writeUTF("8," + deporte_id + "," + date);
+
+            String mensaje = "";
+            mensaje = flujoentrada.readUTF();
+            mensajes = mensaje.split(";");
+
+            if (!mensaje.equals("No se ha encontrado ninguna reserva ese día")) {
+
+                for (String arg : mensajes) {
+                    listaPistasOcupadas.add(new PistaDisponible(arg));
+                }
+
+                List<Integer> pistasDeportivas = getPistasDeportivas(deporte_id);
+                for (int i = 1; i < 7; i++) {
+                    for (Integer id : pistasDeportivas) {
+                        lista.add(new PistaDisponible(id, i));
+                    }
+                }
+
+                List<PistaDisponible> listaRepetidas = new ArrayList<>();
+
+                for (PistaDisponible p : listaPistasOcupadas) {
+                    for (PistaDisponible p2 : lista) {
+                        if (p2.getId_pista() == p.getId_pista() && p2.getId_horario() == p.getId_horario()) {
+                            listaRepetidas.add(p2);
+                        }
+                    }
+                }
+
+                for (PistaDisponible p : listaRepetidas) {
+                    lista.remove(p);
+                }
+
+            } else {
+                for (Integer id : getPistasDeportivas(deporte_id)) {
+                    for (int i = 1; i < 7; i++) {
+                        lista.add(new PistaDisponible(id, i));
+                    }
+                }
+            }
+            return lista;
+
+        } catch (IOException ex) {
+            Logger.getLogger(VentanaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
+    }
+
+    public void crearReserva(Date date, Integer max, Integer base) {
+        try {
+            flujosalida.writeUTF("9," + clienteReserva.getCorreo() + "," + pistaEscogida.getId_pista() + "," + pistaEscogida.getId_horario()
+                    + "," + date + "," + max + "," + base);
+            String mensaje = flujoentrada.readUTF();
+            if (mensaje.equals("OK")) {
+                JOptionPane.showMessageDialog(null, "Se ha creado la reserva correctamente");
+                jDialogNuevoPartido.setVisible(false);
+            } else {
+                JOptionPane.showMessageDialog(null, "Error al crear la reserva");
+            }
+        } catch (IOException ex) {
+            Logger.getLogger(VentanaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    public void refrescarTablaDisponibilidad(int deporte_id, Date date) {
+        modeloTablaDisponibilidad.refreshTableModel(getDisponibilidad(deporte_id, date));
+        jTableDisponibilidad.setModel(modeloTablaDisponibilidad);
+
+        jDialogDisponibilidad.setSize(302, 300);
+        jDialogDisponibilidad.setLocationRelativeTo(null);
+        jDialogDisponibilidad.setVisible(true);
+
+        System.out.println(jTableDisponibilidad.getRowCount());
+    }
+
+    private List<Integer> getPistasDeportivas(int deporte_id) {
+        List<Integer> lista = new ArrayList<>();
+        switch (deporte_id) {
+            case 1:
+                lista.add(4);
+                lista.add(5);
+                return lista;
+            case 2:
+                lista.add(1);
+                lista.add(2);
+                lista.add(3);
+                return lista;
+            case 3:
+                lista.add(6);
+                return lista;
+            case 4:
+                lista.add(4);
+                lista.add(5);
+                return lista;
+            default:
+                return null;
+        }
+    }
+
+    private void limpiarNuevoPartido() {
+        nuevoPartido.getjComboBoxDeportes().setSelectedIndex(0);
+        nuevoPartido.getjSpinnerBase().setValue(1);
+        nuevoPartido.getjSpinnerMax().setValue(2);
+        nuevoPartido.getjButtonReservar().setFocusable(false);
+    }
+
+    private void limpiarNuevoUsuario() {
+        nuevoUsuario.getNombre().setText("");
+        nuevoUsuario.getApellidos().setText("");
+        nuevoUsuario.getCorreo().setText("");
+        nuevoUsuario.getPwd1().setText("");
+        nuevoUsuario.getPwd2().setText("");
+        nuevoUsuario.getjSliderBalonmano().setValue(0);
+        nuevoUsuario.getjSliderBasket().setValue(0);
+        nuevoUsuario.getjSliderPadel().setValue(0);
+        nuevoUsuario.getjSliderFutbol().setValue(0);
+    }
 }

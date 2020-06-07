@@ -5,8 +5,11 @@
  */
 package escritorio;
 
+import java.awt.event.KeyEvent;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import javax.swing.JOptionPane;
+import javax.swing.JTextField;
 import org.apache.commons.codec.binary.Hex;
 
 /**
@@ -19,12 +22,32 @@ public class Login extends javax.swing.JPanel {
      * Creates new form Login
      */
     private VentanaPrincipal parent;
-    
+    private String pwd;
+
     public Login() {
         initComponents();
+        pwd = "";
     }
-    
-    public void setParent(VentanaPrincipal p){ parent = p; }
+
+    public void setParent(VentanaPrincipal p) {
+        parent = p;
+    }
+
+    public String getPwd() {
+        return pwd;
+    }
+
+    public String getCorreo() {
+        return jTextFieldCorreo.getText();
+    }
+
+    public JTextField getjTextFieldContrasena() {
+        return jTextFieldContrasena;
+    }
+
+    public JTextField getjTextFieldCorreo() {
+        return jTextFieldCorreo;
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -40,6 +63,10 @@ public class Login extends javax.swing.JPanel {
         jTextFieldCorreo = new javax.swing.JTextField();
         jLabel2 = new javax.swing.JLabel();
         jTextFieldContrasena = new javax.swing.JTextField();
+        jButtonSalir = new javax.swing.JButton();
+
+        setMaximumSize(new java.awt.Dimension(325, 211));
+        setMinimumSize(new java.awt.Dimension(325, 211));
 
         jButtonLogin.setText("Login");
         jButtonLogin.addActionListener(new java.awt.event.ActionListener() {
@@ -52,28 +79,50 @@ public class Login extends javax.swing.JPanel {
 
         jLabel2.setText("Contraseña");
 
+        jTextFieldContrasena.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                jTextFieldContrasenaKeyPressed(evt);
+            }
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                jTextFieldContrasenaKeyReleased(evt);
+            }
+        });
+
+        jButtonSalir.setText("Salir");
+        jButtonSalir.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonSalirActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(27, 27, 27)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
-                            .addComponent(jButtonLogin)
-                            .addComponent(jLabel2)
-                            .addComponent(jLabel1)
-                            .addComponent(jTextFieldCorreo, javax.swing.GroupLayout.PREFERRED_SIZE, 285, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(20, 20, 20)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(1, 1, 1)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                                    .addComponent(jLabel2)
+                                    .addComponent(jLabel1)
+                                    .addComponent(jTextFieldCorreo, javax.swing.GroupLayout.PREFERRED_SIZE, 285, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addComponent(jTextFieldContrasena, javax.swing.GroupLayout.PREFERRED_SIZE, 285, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(26, 26, 26)
-                        .addComponent(jTextFieldContrasena, javax.swing.GroupLayout.PREFERRED_SIZE, 285, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(26, Short.MAX_VALUE))
+                        .addGap(52, 52, 52)
+                        .addComponent(jButtonSalir)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jButtonLogin)
+                        .addGap(44, 44, 44)))
+                .addContainerGap(19, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(47, 47, 47)
+                .addGap(18, 18, 18)
                 .addComponent(jLabel1)
                 .addGap(18, 18, 18)
                 .addComponent(jTextFieldCorreo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -82,24 +131,100 @@ public class Login extends javax.swing.JPanel {
                 .addGap(18, 18, 18)
                 .addComponent(jTextFieldContrasena, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(26, 26, 26)
-                .addComponent(jButtonLogin)
-                .addContainerGap(66, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jButtonLogin)
+                    .addComponent(jButtonSalir))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
-    
+
     private void jButtonLoginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonLoginActionPerformed
         // TODO add your handling code here:        
         parent.hacerLogin();
     }//GEN-LAST:event_jButtonLoginActionPerformed
-    
-    public String getCorreo(){return jTextFieldCorreo.getText();}
-    
-    public String getPwd(){
-	return jTextFieldContrasena.getText();
-    }
+
+    private void jTextFieldContrasenaKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextFieldContrasenaKeyReleased
+        // TODO add your handling code here:
+        String asteriscos = "";
+        switch (evt.getKeyCode()) {
+            case KeyEvent.VK_ENTER:
+                if(jTextFieldContrasena.getText().length() > 0)
+                    parent.hacerLogin();
+                break;
+
+            case KeyEvent.VK_BACK_SPACE:
+                if (jTextFieldContrasena.getText().length() > 0) {
+                    this.pwd = pwd.substring(0, pwd.length() - 2);
+                    for (int i = 0; i < pwd.length(); i++) {
+                        asteriscos += "*";
+                    }
+                    jTextFieldContrasena.setText(asteriscos);
+                }
+                break;
+
+            case KeyEvent.VK_DELETE:
+                if (jTextFieldContrasena.getText().length() > 0) {
+                    this.pwd = pwd.substring(0, pwd.length() - 2);
+                    for (int i = 0; i < pwd.length(); i++) {
+                        asteriscos += "*";
+                    }
+                    jTextFieldContrasena.setText(asteriscos);
+                }
+                break;
+
+            case KeyEvent.VK_UP:
+                //ignorar
+                break;
+
+            case KeyEvent.VK_DOWN:
+                //ignorar
+                break;
+
+            case KeyEvent.VK_LEFT:
+                //ignorar
+                break;
+
+            case KeyEvent.VK_RIGHT:
+                //ignorar
+                break;
+
+            default:
+                this.pwd += jTextFieldContrasena.getText().charAt(jTextFieldContrasena.getText().length() - 1);
+                for (int i = 0; i < pwd.length(); i++) {
+                    asteriscos += "*";
+                }
+                jTextFieldContrasena.setText(asteriscos);
+                break;
+        }
+    }//GEN-LAST:event_jTextFieldContrasenaKeyReleased
+
+    private void jTextFieldContrasenaKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextFieldContrasenaKeyPressed
+        // TODO add your handling code here:
+        try {
+            if (evt.getKeyCode() == KeyEvent.VK_BACK_SPACE && jTextFieldContrasena.getText().length() != 0) {
+                String asteriscos = "";
+                this.pwd = pwd.substring(0, pwd.length() - 2);
+                for (int i = 0; i < pwd.length(); i++) {
+                    asteriscos += "*";
+                }
+                jTextFieldContrasena.setText(asteriscos);
+            }
+        } catch (java.lang.StringIndexOutOfBoundsException e) {
+        }
+    }//GEN-LAST:event_jTextFieldContrasenaKeyPressed
+
+    private void jButtonSalirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSalirActionPerformed
+        if (JOptionPane.showConfirmDialog(null, "¿Seguro que deséa salir?", "",
+                JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+                    System.exit(0);
+        } else {
+            // ignorar
+        }
+    }//GEN-LAST:event_jButtonSalirActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButtonLogin;
+    private javax.swing.JButton jButtonSalir;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JTextField jTextFieldContrasena;

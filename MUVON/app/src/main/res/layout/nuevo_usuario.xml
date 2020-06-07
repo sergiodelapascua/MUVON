@@ -112,6 +112,40 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="24dp"
                     android:padding="16dp"
+                    android:text="Sexo"
+                    android:textColor="@android:color/black"
+                    android:textSize="24sp" />
+
+                <RadioGroup xmlns:android="http://schemas.android.com/apk/res/android"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal">
+                    <RadioButton android:id="@+id/hombre"
+                        android:layout_width="0dp"
+                        android:layout_weight="0.5"
+                        android:layout_height="match_parent"
+                        android:layout_marginLeft="24dp"
+                        android:text="Hombre"/>
+                    <RadioButton android:id="@+id/mujer"
+                        android:layout_width="0dp"
+                        android:layout_weight="0.5"
+                        android:layout_height="match_parent"
+                        android:layout_marginLeft="24dp"
+                        android:text="Mujer"/>
+                </RadioGroup>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="24dp"
+                    android:padding="16dp"
                     android:text="Deporte"
                     android:textColor="@android:color/black"
                     android:textSize="24sp" />
@@ -149,7 +183,7 @@
                     android:layout_height="wrap_content"
                     android:padding="16dp"
                     android:max="5"
-                    android:min="1"
+                    android:min="0"
                     android:layout_weight="2" />
 
                 <TextView
@@ -186,7 +220,7 @@
                     android:layout_height="wrap_content"
                     android:padding="16dp"
                     android:max="5"
-                    android:min="1"
+                    android:min="0"
                     android:layout_weight="2" />
 
                 <TextView
@@ -223,7 +257,7 @@
                     android:layout_height="wrap_content"
                     android:padding="16dp"
                     android:max="5"
-                    android:min="1"
+                    android:min="0"
                     android:layout_weight="2" />
 
                 <TextView
@@ -260,7 +294,7 @@
                     android:layout_height="wrap_content"
                     android:padding="16dp"
                     android:max="5"
-                    android:min="1"
+                    android:min="0"
                     android:layout_weight="2" />
 
                 <TextView
