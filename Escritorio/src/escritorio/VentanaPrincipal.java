@@ -387,7 +387,6 @@ public class VentanaPrincipal extends javax.swing.JFrame {
             .addComponent(login, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
 
-        jDialogNuevoPartido.setMaximumSize(new java.awt.Dimension(345, 352));
         jDialogNuevoPartido.setMinimumSize(new java.awt.Dimension(345, 352));
 
         nuevoPartido.setParent(this);

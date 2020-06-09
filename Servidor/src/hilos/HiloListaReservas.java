@@ -61,7 +61,7 @@ public class HiloListaReservas extends Thread {
                 mensaje += id + "," + nombre + "," + pista + "," + horario + "," + fecha + "," + jugadores + ";";
             }
 
-            System.out.println(mensaje);
+            //System.out.println(mensaje);
             fsalida.writeUTF((mensaje.equals("")) ? "No se han encontrado reservas almacenadas" : mensaje);
 
         } catch (SQLException ex) {

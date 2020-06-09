@@ -65,9 +65,17 @@ public class HiloCrearReserva extends Thread {
             p2.setInt(5, max);
             p2.setInt(6, num);
             
-            
             int insercion = 0;
             insercion  = p2.executeUpdate();
+            
+            ResultSet resultado = sentencia.executeQuery("SELECT MAX(partido_id) FROM partido");
+            int partido_id = -1;
+            while (resultado.next()) {
+                partido_id = resultado.getInt(1);
+            }
+            
+            String consulta = "INSERT INTO usuario_partido VALUES ("+usuario_id+", "+partido_id+")";
+            sentencia.executeUpdate(consulta);            
 
             fsalida.writeUTF((insercion != 0) ? "OK" : "");
 

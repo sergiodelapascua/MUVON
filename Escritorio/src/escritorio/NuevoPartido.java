@@ -100,7 +100,7 @@ public class NuevoPartido extends javax.swing.JPanel {
 
         jLabel1.setText("Jugadores Inicio");
 
-        jSpinnerBase.setModel(new javax.swing.SpinnerNumberModel(1, 1, 11, 1));
+        jSpinnerBase.setModel(new javax.swing.SpinnerNumberModel(0, 0, 11, 1));
 
         jButtonReservar.setText("Reservar");
         jButtonReservar.setEnabled(false);
