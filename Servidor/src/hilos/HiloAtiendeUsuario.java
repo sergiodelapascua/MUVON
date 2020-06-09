@@ -46,7 +46,7 @@ public class HiloAtiendeUsuario extends Thread {
                         comprobarCorreo(mensajes[1]);
                         break;
                     case "4":
-                        extraerListaClientes();
+                        extraerListaClientes(mensajes[1]);
                         break;
                     case "5":
                         borrarCliente(mensajes[1]);
@@ -114,9 +114,13 @@ public class HiloAtiendeUsuario extends Thread {
         }
     }
 
-    private void extraerListaClientes() {
+    private void extraerListaClientes(String busqueda) {
+        HiloListaClientes hl = null;
         try {
-            HiloListaClientes hl = new HiloListaClientes(fsalida);
+            if(busqueda.equals(" "))
+                hl = new HiloListaClientes(fsalida);
+            else
+                hl = new HiloListaClientes(fsalida, busqueda);
             hl.run();
             hl.join();
         } catch (InterruptedException ex) {

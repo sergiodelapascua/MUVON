@@ -26,8 +26,15 @@ public class HiloListaClientes extends Thread{
     private String username = "root";
     private String password = "";
     private DataOutputStream fsalida;
+    private String busqueda;
  
     public HiloListaClientes(DataOutputStream dot){
+        this.busqueda = "";
+        this.fsalida = dot;
+    }
+ 
+    public HiloListaClientes(DataOutputStream dot, String busqueda){
+        this.busqueda = busqueda;
         this.fsalida = dot;
     }
     
@@ -37,25 +44,46 @@ public class HiloListaClientes extends Thread{
         String apellidos = "";
         String correo = "";
         String mensaje = "";
-        
-        try (Connection conexion = DriverManager.getConnection(url, username, password);
-            Statement sentencia = conexion.createStatement();
-            ResultSet rset = sentencia.executeQuery("SELECT nombre, apellidos, correo FROM usuario");) {
-            while (rset.next()) {
-                nombre = rset.getString("nombre");   
-                apellidos = rset.getString("apellidos");
-                correo = rset.getString("correo");
-                
-                mensaje += nombre + "," + apellidos + "," + correo + ";";
+        if(busqueda.equals("")){
+            try (Connection conexion = DriverManager.getConnection(url, username, password);
+                Statement sentencia = conexion.createStatement();
+                ResultSet rset = sentencia.executeQuery("SELECT nombre, apellidos, correo FROM usuario");) {
+                while (rset.next()) {
+                    nombre = rset.getString("nombre");   
+                    apellidos = rset.getString("apellidos");
+                    correo = rset.getString("correo");
+
+                    mensaje += nombre + "," + apellidos + "," + correo + ";";
+                }
+
+                //System.out.println(mensaje);
+                fsalida.writeUTF((mensaje.equals(""))? "No se han encontrado clientes almacenados":mensaje);
+
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            } catch (IOException ex) {
+                Logger.getLogger(HiloListaClientes.class.getName()).log(Level.SEVERE, null, ex);
             }
-            
-            //System.out.println(mensaje);
-            fsalida.writeUTF((mensaje.equals(""))? "No se han encontrado clientes almacenados":mensaje);
-            
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-        } catch (IOException ex) {
-            Logger.getLogger(HiloListaClientes.class.getName()).log(Level.SEVERE, null, ex);
+        } else {
+            try (Connection conexion = DriverManager.getConnection(url, username, password);
+                Statement sentencia = conexion.createStatement();
+                ResultSet rset = sentencia.executeQuery("SELECT nombre, apellidos, correo FROM usuario WHERE nombre LIKE '"+busqueda+"%' OR apellidos LIKE '"+busqueda+"%'");) {
+                while (rset.next()) {
+                    nombre = rset.getString("nombre");   
+                    apellidos = rset.getString("apellidos");
+                    correo = rset.getString("correo");
+
+                    mensaje += nombre + "," + apellidos + "," + correo + ";";
+                }
+
+                //System.out.println(mensaje);
+                fsalida.writeUTF((mensaje.equals(""))? "No se han encontrado clientes almacenados":mensaje);
+
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            } catch (IOException ex) {
+                Logger.getLogger(HiloListaClientes.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
     }
 }

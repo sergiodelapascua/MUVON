@@ -65,9 +65,6 @@
     </Container>
     <Container class="javax.swing.JDialog" name="jDialogNuevoPartido">
       <Properties>
-        <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-          <Dimension value="[345, 352]"/>
-        </Property>
         <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
           <Dimension value="[345, 352]"/>
         </Property>

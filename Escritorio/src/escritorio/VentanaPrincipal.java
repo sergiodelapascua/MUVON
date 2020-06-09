@@ -52,7 +52,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
     private Cliente clienteReserva;
 
     public VentanaPrincipal() {
-        this.tabla_clientes_seleccionada = true;
+        this.tabla_clientes_seleccionada = false;
         this.logeado = false;
         this.modeloTablaClientes = new ModeloTablaClientes();
         this.modeloTablaReservas = new ModeloTablaReservas();
@@ -287,10 +287,24 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         if (tabla_clientes_seleccionada) {
             modeloTablaClientes.refreshTableModel(getClientes());
             jTable.setModel(modeloTablaClientes);
+            jTextFieldBarraBusqueda.setVisible(true);
+            jTextFieldBarraBusqueda.setText("");
+            jButtonBuscar.setVisible(true);
+            jLabelTitulo.setText("Clientes");
         } else {
             modeloTablaReservas.refreshTableModel(getReservas());
             jTable.setModel(modeloTablaReservas);
+            jTextFieldBarraBusqueda.setVisible(false);
+            jButtonBuscar.setVisible(false);
+            jLabelTitulo.setText("Reservas");
         }
+        TableCellRenderer buttonRenderer = new JTableButtonRenderer();
+        jTable.getColumn("BORRAR").setCellRenderer(buttonRenderer);
+    }
+
+    private void refrescarTableClientes() {
+        modeloTablaClientes.refreshTableModel(getClientes(jTextFieldBarraBusqueda.getText()));
+        jTable.setModel(modeloTablaClientes);
         TableCellRenderer buttonRenderer = new JTableButtonRenderer();
         jTable.getColumn("BORRAR").setCellRenderer(buttonRenderer);
     }
@@ -600,7 +614,10 @@ public class VentanaPrincipal extends javax.swing.JFrame {
     }//GEN-LAST:event_jButtonReservasActionPerformed
 
     private void jButtonBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonBuscarActionPerformed
-        // TODO add your handling code here:
+        if(!jTextFieldBarraBusqueda.getText().equals(""))
+            refrescarTableClientes();
+        else 
+            refrescarTable();
     }//GEN-LAST:event_jButtonBuscarActionPerformed
 
     private void jButtonAñadirClienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonAñadirClienteActionPerformed
@@ -617,7 +634,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
             flujosalida.writeUTF("3," + emailReserva);
             String mensaje = flujoentrada.readUTF();
 
-            if (!emailReserva.equals("")) {
+            if (emailReserva != null) {
                 clienteReserva = new Cliente(mensaje + "," + emailReserva);
 
                 if (mensaje.equals("No se ha encontrado ningún usuario con ese nombre")) {
@@ -816,7 +833,6 @@ public class VentanaPrincipal extends javax.swing.JFrame {
             mensaje = flujoentrada.readUTF();
             System.out.println("EL MENSAJE: " + mensaje);
             if (mensaje.equals("true")) {
-                JOptionPane.showMessageDialog(null, "Bienvenido");
                 logeado = true;
                 jDialogLogin.setVisible(false);
             } else {
@@ -841,7 +857,30 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         List<Cliente> lista = new ArrayList<>();
         String[] mensajes = null;
         try {
-            flujosalida.writeUTF("4,");
+            flujosalida.writeUTF("4, ");
+
+            String mensaje = "";
+            mensaje = flujoentrada.readUTF();
+            if (mensaje.equals("No se han encontrado clientes almacenados")) {
+                JOptionPane.showMessageDialog(null, "No se han encontrado clientes almacenados");
+            } else {
+                mensajes = mensaje.split(";");
+                for (String arg : mensajes) {
+                    lista.add(new Cliente(arg));
+                }
+            }
+            return lista;
+        } catch (IOException ex) {
+            Logger.getLogger(VentanaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
+    }
+
+    private List<Cliente> getClientes(String busqueda) {
+        List<Cliente> lista = new ArrayList<>();
+        String[] mensajes = null;
+        try {
+            flujosalida.writeUTF("4,"+busqueda);
 
             String mensaje = "";
             mensaje = flujoentrada.readUTF();
