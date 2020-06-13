@@ -1,65 +1,82 @@
 package com.example.muvon.fragments;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
+import android.widget.Spinner;
 
 import com.example.muvon.R;
+import com.example.muvon.activities.DetallesPartido;
+import com.example.muvon.activities.Principal;
+import com.example.muvon.adapters.AdapterNotificaciones;
+import com.example.muvon.adapters.AdapterPartido;
+import com.example.muvon.modelo.Notificacion;
+import com.example.muvon.modelo.Reserva;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link FragmentNotificaciones#newInstance} factory method to
- * create an instance of this fragment.
- */
+import java.util.ArrayList;
+import java.util.List;
+
 public class FragmentNotificaciones extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    private RecyclerView recyclerView;
+    private RecyclerView.LayoutManager layoutManager;
+    private Context context;
+    private LinearLayout ly;
+    private Principal principal;
 
     public FragmentNotificaciones() {
-        // Required empty public constructor
-    }
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment FragmentNotificaciones.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static FragmentNotificaciones newInstance(String param1, String param2) {
-        FragmentNotificaciones fragment = new FragmentNotificaciones();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_notificaciones, container, false);
+
+        principal = ((Principal)getActivity());
+
+        //ly = view.findViewById(R.id.no_connection);
+
+        context = this.getContext();
+
+        recyclerView = view.findViewById(R.id.recyclerView_notificaciones);
+        layoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setItemViewCacheSize(20);
+        recyclerView.setDrawingCacheEnabled(true);
+        recyclerView.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
+
+        AdapterNotificaciones a = new AdapterNotificaciones(buscarNotificaciones(), R.layout.fila_partidos, principal);
+        recyclerView.setAdapter(a);
+
+        return view;
+    }
+
+    private List<Notificacion> buscarNotificaciones(){
+        List<Notificacion> lista = new ArrayList<>();
+        String[] mensajes = null;
+        principal.escribir("15,"+principal.cliente.getCorreo());
+
+        String mensaje = "";
+        mensaje = principal.leer();
+        if (mensaje.equals("No se han encontrado reservas almacenadas")) {
+            //ignorar
+        } else {
+            mensajes = mensaje.split(";");
+            for (String arg : mensajes) {
+                lista.add(new Notificacion(arg));
+            }
+            return lista;
         }
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_notificaciones, container, false);
+        return null;
     }
 }

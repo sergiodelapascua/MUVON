@@ -1012,6 +1012,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
             if (mensaje.equals("OK")) {
                 JOptionPane.showMessageDialog(null, "Se ha creado la reserva correctamente");
                 jDialogNuevoPartido.setVisible(false);
+                refrescarTable();
             } else {
                 JOptionPane.showMessageDialog(null, "Error al crear la reserva");
             }

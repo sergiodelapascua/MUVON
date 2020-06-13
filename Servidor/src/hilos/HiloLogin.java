@@ -30,32 +30,62 @@ public class HiloLogin extends Thread{
     private DataOutputStream fsalida;
     private String c;
     private String pwd;
+    private boolean movil;
  
     public HiloLogin(DataOutputStream dot,String correo, String p){
         this.fsalida = dot;
         this.c = correo;
         this.pwd = p;
+        this.movil = false;
+    }
+ 
+    public HiloLogin(DataOutputStream dot,String correo, String p, boolean m){
+        this.fsalida = dot;
+        this.c = correo;
+        this.pwd = p;
+        this.movil = m;
     }
     
     @Override
     public void run() {
         boolean admin = false;
-        try (Connection conexion = DriverManager.getConnection(url, username, password);
-            PreparedStatement p = conexion.prepareStatement("SELECT administrador FROM usuario where correo = (?) and pwd = (?)");) {
-            p.setString(1, c);
-            p.setString(2, encriptarPwd(pwd));
-            ResultSet rset = p.executeQuery();
-            while (rset.next()) {
-                admin = rset.getBoolean("administrador");            
+        String nombre = "";
+        if (!movil){
+            try (Connection conexion = DriverManager.getConnection(url, username, password);
+                PreparedStatement p = conexion.prepareStatement("SELECT administrador FROM usuario where correo = (?) and pwd = (?)");) {
+                p.setString(1, c);
+                p.setString(2, encriptarPwd(pwd));
+                ResultSet rset = p.executeQuery();
+                while (rset.next()) {
+                    admin = rset.getBoolean("administrador");            
+                }
+
+
+                fsalida.writeUTF((admin)? "true":"false");
+
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            } catch (IOException ex) {
+                Logger.getLogger(HiloLogin.class.getName()).log(Level.SEVERE, null, ex);
             }
-            
-            
-            fsalida.writeUTF((admin)? "true":"false");
-            
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-        } catch (IOException ex) {
-            Logger.getLogger(HiloLogin.class.getName()).log(Level.SEVERE, null, ex);
+        } else {
+            try (Connection conexion = DriverManager.getConnection(url, username, password);
+                PreparedStatement p = conexion.prepareStatement("SELECT nombre FROM usuario where correo = (?) and pwd = (?)");) {
+                p.setString(1, c);
+                p.setString(2, encriptarPwd(pwd));
+                ResultSet rset = p.executeQuery();
+                while (rset.next()) {
+                    nombre = rset.getString("nombre");            
+                }
+
+
+                fsalida.writeUTF((!nombre.equals(""))? "true":"false");
+
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            } catch (IOException ex) {
+                Logger.getLogger(HiloLogin.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
     }
     

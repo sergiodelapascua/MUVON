@@ -33,6 +33,7 @@ public class HiloPistasOcupadas extends Thread {
         this.fsalida = dot;
         this.id = deporte_id;
         this.fecha = Date.valueOf(date);
+        //System.out.println("fecha escogida" + fecha);
     }
 
     @Override
@@ -44,7 +45,7 @@ public class HiloPistasOcupadas extends Thread {
                 PreparedStatement p = conexion.prepareStatement("SELECT pista_id, horario_id\n"
                 + "FROM partido\n"
                 + "WHERE pista_id IN (SELECT pista_id FROM deporte_pista where deporte_id = (?))\n"
-                + "AND fecha >= (?)");) {
+                + "AND fecha = (?)");) {
             p.setInt(1, id);
             p.setDate(2, fecha);
             ResultSet rset = p.executeQuery();

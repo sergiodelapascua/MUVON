@@ -33,13 +33,33 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="24dp"
                 android:padding="16dp"
-                android:text="Nombre de usuario"
+                android:text="Nombre del usuario"
                 android:textColor="@android:color/black"
                 android:textSize="24sp" />
 
             <EditText
                 android:layout_height="wrap_content"
                 android:layout_width="match_parent"
+                android:id="@+id/nombre"
+                android:padding="8dp"
+                android:background="@drawable/backwithborder"
+                android:layout_marginRight="32dp"
+                android:layout_marginLeft="32dp"
+                android:inputType="text"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="24dp"
+                android:padding="16dp"
+                android:text="Apellidos del ususario"
+                android:textColor="@android:color/black"
+                android:textSize="24sp" />
+
+            <EditText
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:id="@+id/apellidos"
                 android:padding="8dp"
                 android:background="@drawable/backwithborder"
                 android:layout_marginRight="32dp"
@@ -56,13 +76,14 @@
                 android:textSize="24sp" />
 
             <EditText
+                android:id="@+id/correo"
                 android:layout_height="wrap_content"
                 android:layout_width="match_parent"
                 android:layout_marginRight="32dp"
                 android:layout_marginLeft="32dp"
                 android:background="@drawable/backwithborder"
                 android:padding="8dp"
-                android:inputType="text"/>
+                android:inputType="textEmailAddress" />
 
             <TextView
                 android:layout_width="match_parent"
@@ -74,7 +95,7 @@
                 android:textSize="24sp" />
 
             <EditText
-                android:id="@+id/pwd"
+                android:id="@+id/pwd1"
                 android:layout_height="wrap_content"
                 android:layout_width="match_parent"
                 android:padding="8dp"
@@ -168,7 +189,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
 
-                <CheckBox
+                <TextView
                     android:id="@+id/checkBoxFutbol"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -186,17 +207,6 @@
                     android:min="0"
                     android:layout_weight="2" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textAlignment="textEnd"
-                    android:layout_marginRight="36dp"
-                    android:padding="16dp"
-                    android:text="0"
-                    android:textColor="@android:color/black"
-                    android:textSize="24sp"
-                    android:gravity="end" />
-
             </LinearLayout>
 
 
@@ -205,7 +215,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
 
-                <CheckBox
+                <TextView
                     android:id="@+id/checkBoxPadel"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -223,17 +233,6 @@
                     android:min="0"
                     android:layout_weight="2" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textAlignment="textEnd"
-                    android:layout_marginRight="36dp"
-                    android:padding="16dp"
-                    android:text="0"
-                    android:textColor="@android:color/black"
-                    android:textSize="24sp"
-                    android:gravity="end" />
-
             </LinearLayout>
 
 
@@ -242,7 +241,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
 
-                <CheckBox
+                <TextView
                     android:id="@+id/checkBoxBasket"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -260,17 +259,6 @@
                     android:min="0"
                     android:layout_weight="2" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textAlignment="textEnd"
-                    android:layout_marginRight="36dp"
-                    android:padding="16dp"
-                    android:text="0"
-                    android:textColor="@android:color/black"
-                    android:textSize="24sp"
-                    android:gravity="end" />
-
             </LinearLayout>
 
 
@@ -279,7 +267,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
 
-                <CheckBox
+                <TextView
                     android:id="@+id/checkBoxBalonmano"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -297,20 +285,10 @@
                     android:min="0"
                     android:layout_weight="2" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textAlignment="textEnd"
-                    android:layout_marginRight="36dp"
-                    android:padding="16dp"
-                    android:text="0"
-                    android:textColor="@android:color/black"
-                    android:textSize="24sp"
-                    android:gravity="end" />
-
             </LinearLayout>
 
             <Button
+                android:id="@+id/crearUsuario"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"

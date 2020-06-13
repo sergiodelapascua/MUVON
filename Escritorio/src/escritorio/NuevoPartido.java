@@ -188,6 +188,7 @@ public class NuevoPartido extends javax.swing.JPanel {
             LocalDate localDate = LocalDateTime.ofInstant(fechaSeleccionada.toInstant(),
                     fechaSeleccionada.getTimeZone().toZoneId()).toLocalDate();
             Date date = Date.valueOf(localDate);
+            //System.out.println("FECHA "+date);
             int deporte_id = jComboBoxDeportes.getSelectedIndex();
 
             parent.refrescarTablaDisponibilidad(deporte_id, date);

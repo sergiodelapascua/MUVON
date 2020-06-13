@@ -99,14 +99,6 @@
                     android:visibility="gone"/>
             </LinearLayout>
         -->
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:padding="8dp"
-                android:layout_marginTop="16dp"
-                android:textStyle="bold"
-                android:text="Conectar"
-                android:layout_gravity="center"/>
 
             <TextView
                 android:layout_width="wrap_content"
@@ -142,7 +134,7 @@
                     android:padding="6dp"
                     android:layout_gravity="end"
                     android:layout_marginRight="8dp"
-                    android:src="@drawable/cero_stars_ic" />
+                    android:background="@drawable/cero_stars_ic" />
 
             </LinearLayout>
 
@@ -170,7 +162,7 @@
                     android:padding="6dp"
                     android:layout_gravity="end"
                     android:layout_marginRight="8dp"
-                    android:src="@drawable/cero_stars_ic" />
+                    android:background="@drawable/cero_stars_ic" />
 
             </LinearLayout>
 
@@ -198,7 +190,7 @@
                     android:padding="6dp"
                     android:layout_gravity="end"
                     android:layout_marginRight="8dp"
-                    android:src="@drawable/cero_stars_ic" />
+                    android:background="@drawable/cero_stars_ic" />
 
             </LinearLayout>
 
@@ -226,7 +218,7 @@
                     android:padding="6dp"
                     android:layout_gravity="end"
                     android:layout_marginRight="8dp"
-                    android:src="@drawable/cero_stars_ic" />
+                    android:background="@drawable/cero_stars_ic" />
 
             </LinearLayout>
 
@@ -241,7 +233,7 @@
                 android:layout_gravity="center"/>
 
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recyclerView"
+                android:id="@+id/recyclerViewPartidosPerfil"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:padding="8dp"

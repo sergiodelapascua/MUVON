@@ -33,6 +33,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_gravity="center"
+                android:src="@drawable/female_ic"
                 android:gravity="center"/>
         </LinearLayout>
 
@@ -42,16 +43,19 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight= "0.60"
+            android:baselineAligned="false"
             android:padding="8dp">
 
             <TextView
                 android:id="@+id/titulo_partido"
                 android:layout_width="wrap_content"
                 android:layout_height="0dp"
-                android:layout_weight="0.25"
-                android:ems="15"
-                android:text="Partido de fulanito"
+                android:layout_weight="0.4"
+                android:ems="13"
+                android:text="Sergio de la Pascua Roca"
+                android:textColor="@android:color/black"
                 android:gravity="bottom"
+                android:ellipsize="end"
                 android:textSize="20sp"
                 android:textStyle="bold"/>
 
@@ -59,30 +63,32 @@
                 android:id="@+id/fecha_partido"
                 android:layout_width="wrap_content"
                 android:layout_height="0dp"
-                android:layout_weight="0.25"
+                android:layout_weight="0.3"
                 android:ems="15"
                 android:text="Fecha xx/xx/xxxx"
+                android:textColor="@android:color/black"
                 android:gravity="bottom"
-                android:textSize="20sp"/>
+                android:textSize="18sp"/>
 
             <TextView
-                android:id="@+id/champName"
+                android:id="@+id/horario_partido"
                 android:layout_width="wrap_content"
                 android:layout_height="0dp"
-                android:layout_weight="0.25"
+                android:layout_weight="0.3"
                 android:ems="15"
                 android:text="Horario"
+                android:textColor="@android:color/black"
                 android:gravity="bottom"
-                android:textSize="20sp"/>
+                android:textSize="18sp"/>
 
-            <TextView
+           <!-- <TextView
                 android:id="@+id/champTitle"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="0.25"
                 android:text="Nivel *****"
                 android:textSize="18sp"
-                android:textColor="@android:color/darker_gray" />
+                android:textColor="@android:color/darker_gray" /> -->
         </LinearLayout>
 
         <!-- Info del partido -->
@@ -94,15 +100,14 @@
             android:padding="8dp">
 
             <TextView
-                android:id="@+id/pista_partido"
                 android:layout_width="wrap_content"
                 android:layout_height="0dp"
                 android:layout_weight="0.25"
                 android:ems="15"
-                android:text="Pista X"
+                android:text="Jugadores"
+                android:textColor="@android:color/black"
                 android:gravity="center"
-                android:textSize="20sp"
-                android:textStyle="bold"/>
+                android:textSize="12sp"/>
 
             <TextView
                 android:id="@+id/asistentes_partido"
@@ -111,6 +116,7 @@
                 android:layout_weight="0.25"
                 android:ems="15"
                 android:text="x/10"
+                android:textColor="@android:color/black"
                 android:gravity="center"
                 android:textSize="20sp"/>
         </LinearLayout>

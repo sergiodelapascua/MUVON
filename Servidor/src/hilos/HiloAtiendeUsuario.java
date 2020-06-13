@@ -63,6 +63,24 @@ public class HiloAtiendeUsuario extends Thread {
                     case "9":
                         crearReserva(mensajes[1], mensajes[2], mensajes[3], mensajes[4], mensajes[5], mensajes[6]);
                         break;
+                    case "10":
+                        loginMovil(mensajes);
+                        break;
+                    case "11":
+                        listarParticipantes(mensajes[1]);
+                        break;
+                    case "12":
+                        perfilUsuario(mensajes[1]);
+                        break;
+                    case "13":
+                        invitados(mensajes[1]);
+                        break;
+                    case "14":
+                        partidoDeUsuario(mensajes[1]);
+                        break;
+                    case "15":
+                        comprobarNotificaciones(mensajes[1]);
+                        break;
                     default:
                         System.out.println("Se ha liado");
                         System.exit(0);
@@ -86,6 +104,16 @@ public class HiloAtiendeUsuario extends Thread {
     private void login(String[] mensajes) {
         try {
             HiloLogin hl = new HiloLogin(fsalida,mensajes[1], mensajes[2]);
+            hl.run();
+            hl.join();
+        } catch (InterruptedException ex) {
+            Logger.getLogger(HiloAtiendeUsuario.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    private void loginMovil(String[] mensajes) {
+        try {
+            HiloLogin hl = new HiloLogin(fsalida,mensajes[1], mensajes[2], true);
             hl.run();
             hl.join();
         } catch (InterruptedException ex) {
@@ -177,5 +205,56 @@ public class HiloAtiendeUsuario extends Thread {
             Logger.getLogger(HiloAtiendeUsuario.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+
+    private void listarParticipantes(String mensaje) {
+        try {
+            HiloListaParticipantes hl = new HiloListaParticipantes(fsalida,mensaje);
+            hl.run();
+            hl.join();
+        } catch (InterruptedException ex) {
+            Logger.getLogger(HiloAtiendeUsuario.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    private void perfilUsuario(String mensaje) {
+        try {
+            HiloPerfilUsuario hl = new HiloPerfilUsuario(fsalida,mensaje);
+            hl.run();
+            hl.join();
+        } catch (InterruptedException ex) {
+            Logger.getLogger(HiloAtiendeUsuario.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    private void invitados(String mensaje) {
+        try {
+            HiloInvitados hl = new HiloInvitados(fsalida,mensaje);
+            hl.run();
+            hl.join();
+        } catch (InterruptedException ex) {
+            Logger.getLogger(HiloAtiendeUsuario.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    private void partidoDeUsuario(String mensaje) {
+        try {
+            HiloListaPartidosCreadoPorUsuario hl = new HiloListaPartidosCreadoPorUsuario(fsalida,mensaje);
+            hl.run();
+            hl.join();
+        } catch (InterruptedException ex) {
+            Logger.getLogger(HiloAtiendeUsuario.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    private void comprobarNotificaciones(String mensaje) {
+        try {
+            HiloNotificacion hl = new HiloNotificacion(fsalida,mensaje);
+            hl.run();
+            hl.join();
+        } catch (InterruptedException ex) {
+            Logger.getLogger(HiloAtiendeUsuario.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
     
 }
