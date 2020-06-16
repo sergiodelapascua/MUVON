@@ -13,6 +13,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.example.muvon.R;
+import com.example.muvon.Util.Constantes;
 import com.example.muvon.modelo.Cliente;
 import com.example.muvon.modelo.Conexion;
 
@@ -22,10 +23,8 @@ import java.io.IOException;
 import java.net.ConnectException;
 import java.net.Socket;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements Constantes {
 
-    String host = "192.168.1.81";
-    int puerto = 4444;
     DataOutputStream fsalida = null;
     DataInputStream fentrada = null;
     static Socket socket = null;
@@ -43,15 +42,15 @@ public class MainActivity extends AppCompatActivity {
         StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder().permitNetwork().build());
         conexion = true;
         try {
-            System.out.println(0);
+            //System.out.println(0);
             socket = new Socket(host, puerto);
-            System.out.println(1);
+            //System.out.println(1);
             fsalida = new DataOutputStream(socket.getOutputStream());
-            System.out.println(2);
+            //System.out.println(2);
             fentrada = new DataInputStream(socket.getInputStream());
+            //System.out.println(3);
             String descartar = fentrada.readUTF();
-            System.out.println("LA ENTRADAAAAA : " + descartar);
-            System.out.println(3);
+            //System.out.println("LA ENTRADAAAAA : " + descartar);
         } catch (ConnectException ex) {
             conexion = false;
             System.err.println("No se pudo realizar conexión con el servidor");
@@ -80,7 +79,7 @@ public class MainActivity extends AppCompatActivity {
                                     } catch (IOException e) {
                                         e.printStackTrace();
                                     }
-                                    //finish();
+                                    finish();
                                     break;
 
                                 case DialogInterface.BUTTON_NEGATIVE:
@@ -107,10 +106,10 @@ public class MainActivity extends AppCompatActivity {
                             fsalida.writeUTF("10," + correo.getText() + "," + pwd.getText());
                             String mensaje = "";
                             Cliente cl = null;
-                            cl = new Cliente(" , ," + correo.getText());
                             mensaje = fentrada.readUTF();
-                            System.out.println("EL MENSAJE: " + mensaje);
-                            if (mensaje.equals("true")) {
+                            //System.out.println("EL MENSAJE: " + mensaje);
+                            if (!mensaje.equals("false")) {
+                                cl = new Cliente(mensaje+" ," + correo.getText());
                                 if (cl != null) {
                                     Intent intent = new Intent(MainActivity.this, Principal.class);
                                     intent.putExtra("cliente", cl);

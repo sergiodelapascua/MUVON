@@ -32,6 +32,7 @@ public class HiloPistasOcupadas extends Thread {
     public HiloPistasOcupadas(DataOutputStream dot, int deporte_id, String date) {
         this.fsalida = dot;
         this.id = deporte_id;
+        //System.out.println("fecha que llega" + date);
         this.fecha = Date.valueOf(date);
         //System.out.println("fecha escogida" + fecha);
     }

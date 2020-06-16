@@ -18,7 +18,7 @@
         tools:layout="@layout/fragment_partidos" />
 
     <fragment
-        android:id="@+id/navigation_home"
+        android:id="@+id/navigation_perfil"
         android:name="com.example.muvon.fragments.FragmentPerfil"
         android:label="Perfil"
         tools:layout="@layout/fragment_perfil" />

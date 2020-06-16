@@ -15,7 +15,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="horizontal"
-        android:id="@+id/fila_partido"
+        android:id="@+id/fila_notificacion"
         android:background="@android:color/white">
 
         <!-- Icono del deporte -->
@@ -29,12 +29,12 @@
             android:paddingBottom="8dp">
 
             <ImageView
-                android:id="@+id/avatar"
+                android:id="@+id/icono_noti"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_gravity="center"
                 android:gravity="center"
-                android:src="@drawable/male_ic"/>
+                android:background="@drawable/male_ic"/>
         </LinearLayout>
 
         <!-- Info del partido -->
@@ -51,7 +51,7 @@
                 android:layout_weight="0.33"
                 android:ems="15"
                 android:text="Hoy tienes partido"
-                android:textColor="@color/colorPrimary"
+                android:textColor="@android:color/black"
                 android:gravity="bottom"
                 android:textSize="20sp"
                 android:textStyle="bold"/>
@@ -63,7 +63,7 @@
                 android:layout_weight="0.33"
                 android:ems="15"
                 android:text="Pista 1 de Padel"
-                android:textColor="@color/colorPrimary"
+                android:textColor="@android:color/black"
                 android:gravity="bottom"
                 android:textSize="20sp"/>
 
@@ -75,7 +75,7 @@
                 android:layout_height="0dp"
                 android:layout_weight="0.33"
                 android:text="16:00-17:00"
-                android:textColor="@color/colorPrimary"
+                android:textColor="@android:color/black"
                 android:textSize="20sp"/>
 
         </LinearLayout>

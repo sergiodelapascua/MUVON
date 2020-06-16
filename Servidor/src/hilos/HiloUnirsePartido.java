@@ -25,27 +25,28 @@ public class HiloUnirsePartido extends Thread{
     private String username = "root";
     private String password = "";
     private DataOutputStream fsalida;
-    private int usuario_id;
+    private String correo;
     private int partido_id;
  
-    public HiloUnirsePartido(DataOutputStream dot,int uid, int pid){
+    public HiloUnirsePartido(DataOutputStream dot,String c, String pid){
         this.fsalida = dot;
-        this.usuario_id = uid;
-        this.partido_id = pid;
+        this.correo = c;
+        this.partido_id = Integer.parseInt(pid);
     }
     
     @Override
     public void run() {
         try (Connection conexion = DriverManager.getConnection(url, username, password);
-            PreparedStatement p = conexion.prepareStatement("INSERT INTO usuario_partido VALUES (?,?)");) {
-            p.setInt(1, usuario_id);
+            PreparedStatement p = conexion.prepareStatement("INSERT INTO usuario_partido VALUES ((SELECT usuario_id from usuario where correo = (?)),?)");) {
+            p.setString(1, correo);
             p.setInt(2, partido_id);
             int insercion = 0;
             insercion  = p.executeUpdate();
             
-            fsalida.writeUTF((insercion != 0) ? "OK" : "");
+            fsalida.writeUTF((insercion != 0) ? "OK" : "Error al unirse al partido");
             
         } catch (SQLException ex) {
+            System.out.println("AQUIIII");
             ex.printStackTrace();
         } catch (IOException ex) {
             Logger.getLogger(HiloCompruebaCorreo.class.getName()).log(Level.SEVERE, null, ex);

@@ -12,8 +12,8 @@ public class Notificacion implements Serializable {
 
     public Notificacion(String arg) {
         String[] argumentos = arg.split(",");
-        this.pista = argumentos[0];
-        this.horario = argumentos[1];
+        this.pista = argumentos[1];
+        this.horario = argumentos[0];
     }
 
     public String getPista() {

@@ -41,7 +41,7 @@ public class FragmentNotificaciones extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_notificaciones, container, false);
 
-        principal = ((Principal)getActivity());
+        principal = ((Principal) getActivity());
 
         //ly = view.findViewById(R.id.no_connection);
 
@@ -55,27 +55,40 @@ public class FragmentNotificaciones extends Fragment {
         recyclerView.setDrawingCacheEnabled(true);
         recyclerView.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
 
-        AdapterNotificaciones a = new AdapterNotificaciones(buscarNotificaciones(), R.layout.fila_partidos, principal);
-        recyclerView.setAdapter(a);
+        List<Notificacion> lista = buscarNotificaciones();
+        LinearLayout linear = view.findViewById(R.id.sin_notificaciones);
+
+        if (lista == null) {
+            linear.setVisibility(View.VISIBLE);
+        } else {
+            linear.setVisibility(View.GONE);
+            AdapterNotificaciones a = new AdapterNotificaciones(buscarNotificaciones(), R.layout.fila_notificacion, principal);
+            recyclerView.setAdapter(a);
+        }
 
         return view;
     }
 
-    private List<Notificacion> buscarNotificaciones(){
+    private List<Notificacion> buscarNotificaciones() {
         List<Notificacion> lista = new ArrayList<>();
         String[] mensajes = null;
-        principal.escribir("15,"+principal.cliente.getCorreo());
+        principal.escribir("15," + principal.cliente.getCorreo());
 
         String mensaje = "";
         mensaje = principal.leer();
         if (mensaje.equals("No se han encontrado reservas almacenadas")) {
             //ignorar
         } else {
-            mensajes = mensaje.split(";");
-            for (String arg : mensajes) {
-                lista.add(new Notificacion(arg));
+            if (!mensaje.equals("")) {
+                if (!mensaje.equals("No hay notificaciones")) {
+                    mensajes = mensaje.split(";");
+                    for (String arg : mensajes) {
+                        lista.add(new Notificacion(arg));
+                    }
+                    System.out.println(lista);
+                    return lista;
+                }
             }
-            return lista;
         }
         return null;
     }

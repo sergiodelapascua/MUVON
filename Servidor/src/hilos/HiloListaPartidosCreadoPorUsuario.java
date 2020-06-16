@@ -51,7 +51,7 @@ public class HiloListaPartidosCreadoPorUsuario extends Thread {
                 + "AND u.usuario_id = p.usuario_id\n"
                 + "AND u.usuario_id = (SELECT usuario_id FROM usuario WHERE correo = (?))\n"
                 + "AND p.partido_id = up.partido_id\n"
-                + "AND p.fecha > NOW()\n"
+                + "AND p.fecha >= DATE(NOW())\n"
                 + "GROUP BY up.partido_id");) {
             
             p.setString(1, correo);
@@ -68,7 +68,7 @@ public class HiloListaPartidosCreadoPorUsuario extends Thread {
                 mensaje += id + "," + nombre + "," + pista + "," + horario + "," + fecha + "," + jugadores + ";";
             }
 
-            //System.out.println(mensaje);
+            System.out.println("Lo que importa: "+mensaje);
             fsalida.writeUTF((mensaje.equals("")) ? "No se han encontrado reservas almacenadas" : mensaje);
 
         } catch (SQLException ex) {

@@ -67,7 +67,7 @@ public class HiloListaClientes extends Thread{
         } else {
             try (Connection conexion = DriverManager.getConnection(url, username, password);
                 Statement sentencia = conexion.createStatement();
-                ResultSet rset = sentencia.executeQuery("SELECT nombre, apellidos, correo FROM usuario WHERE nombre LIKE '"+busqueda+"%' OR apellidos LIKE '"+busqueda+"%'");) {
+                ResultSet rset = sentencia.executeQuery("SELECT nombre, apellidos, correo FROM usuario WHERE nombre LIKE '%"+busqueda+"%' OR apellidos LIKE '%"+busqueda+"%' OR correo LIKE '%"+busqueda+"%'");) {
                 while (rset.next()) {
                     nombre = rset.getString("nombre");   
                     apellidos = rset.getString("apellidos");

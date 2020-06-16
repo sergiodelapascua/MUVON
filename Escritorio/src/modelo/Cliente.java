@@ -9,7 +9,7 @@ package modelo;
  *
  * @author sergio
  */
-public class Cliente {
+public class Cliente implements Comparable<Cliente>{
     
     private String nombre;
     private String apellidos;
@@ -48,6 +48,12 @@ public class Cliente {
     public void setCorreo(String correo) {
         this.correo = correo;
     }
-    
-    
+
+    @Override
+    public int compareTo(Cliente c) {
+        if(this.nombre.compareTo(c.getNombre()) == 0)
+            return this.apellidos.compareTo(c.getApellidos());
+        else
+            return this.nombre.compareTo(c.getNombre());
+    }
 }

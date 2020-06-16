@@ -11,6 +11,12 @@ public class Cliente implements Serializable {
     public Cliente() {
     }
 
+    public Cliente(String nombre, String apellidos, String correo) {
+        this.nombre = nombre;
+        this.apellidos = apellidos;
+        this.correo = correo;
+    }
+
     public Cliente(String arg) {
         String[] argumentos = arg.split(",");
         this.nombre = argumentos[0];

@@ -50,6 +50,8 @@ public class HiloLogin extends Thread{
     public void run() {
         boolean admin = false;
         String nombre = "";
+        String apellidos = "";
+        String mensaje = "";
         if (!movil){
             try (Connection conexion = DriverManager.getConnection(url, username, password);
                 PreparedStatement p = conexion.prepareStatement("SELECT administrador FROM usuario where correo = (?) and pwd = (?)");) {
@@ -70,16 +72,17 @@ public class HiloLogin extends Thread{
             }
         } else {
             try (Connection conexion = DriverManager.getConnection(url, username, password);
-                PreparedStatement p = conexion.prepareStatement("SELECT nombre FROM usuario where correo = (?) and pwd = (?)");) {
+                PreparedStatement p = conexion.prepareStatement("SELECT nombre, apellidos FROM usuario where correo = (?) and pwd = (?)");) {
                 p.setString(1, c);
                 p.setString(2, encriptarPwd(pwd));
                 ResultSet rset = p.executeQuery();
                 while (rset.next()) {
-                    nombre = rset.getString("nombre");            
+                    nombre = rset.getString("nombre"); 
+                    apellidos = rset.getString("apellidos");
                 }
+                    mensaje = nombre+","+apellidos;
 
-
-                fsalida.writeUTF((!nombre.equals(""))? "true":"false");
+                fsalida.writeUTF((!nombre.equals(""))? mensaje:"false");
 
             } catch (SQLException ex) {
                 ex.printStackTrace();

@@ -5,6 +5,7 @@
  */
 package escritorio;
 
+import Util.Constantes;
 import java.awt.Component;
 import java.awt.event.ActionListener;
 import java.io.DataInputStream;
@@ -14,6 +15,7 @@ import java.net.Socket;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
@@ -33,13 +35,11 @@ import modelo.Reserva;
  *
  * @author sergio
  */
-public class VentanaPrincipal extends javax.swing.JFrame {
+public class VentanaPrincipal extends javax.swing.JFrame implements Constantes {
 
     /**
      * Creates new form VentanaPrincipal
      */
-    private String host = "localhost";
-    private int puerto = 4444;
     private DataOutputStream flujosalida = null;
     private DataInputStream flujoentrada = null;
     private Socket socket = null;
@@ -64,7 +64,8 @@ public class VentanaPrincipal extends javax.swing.JFrame {
             socket = new Socket(host, puerto);
             flujosalida = new DataOutputStream(socket.getOutputStream());
             flujoentrada = new DataInputStream(socket.getInputStream());
-            System.out.println(flujoentrada.readUTF());
+            String m = flujoentrada.readUTF();
+            //System.out.println(m);
 
             initComponents();
 
@@ -109,7 +110,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
             return getValueAt(0, colum).getClass();
         }
 
-        public void refreshTableModel(List<Cliente> lista) {
+        public void refreshTableModel(TreeSet<Cliente> lista) {
 
             if (!lista.isEmpty()) {
                 int numCol = columnNames.length + 1;
@@ -119,13 +120,14 @@ public class VentanaPrincipal extends javax.swing.JFrame {
                 ImageIcon icono = new ImageIcon("icon.png");
                 ImageIcon iconoEscala = new ImageIcon(icono.getImage().getScaledInstance(18, -1, java.awt.Image.SCALE_DEFAULT));
 
-                for (int i = 0; i < numFilas; i++) {
-                    data[i][0] = lista.get(i).getNombre();
-                    data[i][1] = lista.get(i).getApellidos();
-                    data[i][2] = lista.get(i).getCorreo();
+                int i = 0;
+                for (Cliente c : lista) {
+                    data[i][0] = c.getNombre();
+                    data[i][1] = c.getApellidos();
+                    data[i][2] = c.getCorreo();
                     data[i][3] = new JButton(iconoEscala);
-                    data[i][4] = lista.get(i);
-                    final Cliente c = lista.get(i);
+                    data[i][4] = c;
+                    final Cliente c2 = c;
                     ((JButton) data[i][3]).addActionListener(new ActionListener() {
                         @Override
                         public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -134,13 +136,14 @@ public class VentanaPrincipal extends javax.swing.JFrame {
                                     JOptionPane.YES_NO_OPTION,
                                     JOptionPane.QUESTION_MESSAGE);
                             if (opcion == JOptionPane.YES_OPTION) {
-                                borrarCliente(c);
+                                borrarCliente(c2);
                                 refrescarTable();
                             } else if (opcion == JOptionPane.NO_OPTION) {
                                 JOptionPane.showMessageDialog(null, "No hemos borrado a" + c.getNombre() + ".", "Error", JOptionPane.ERROR_MESSAGE);
                             }
                         }
                     });
+                    i++;
                 }
             } else {
                 data = new Object[0][0];
@@ -271,7 +274,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
                     data[i][1] = p.getFranja();
                     data[i][2] = p;
                     final PistaDisponible pista = p;
-                    System.out.println(pista.toString());
+                    //System.out.println(pista.toString());
                     i++;
                 }
             } else {
@@ -283,19 +286,16 @@ public class VentanaPrincipal extends javax.swing.JFrame {
 
     }
 
-    private void refrescarTable() {
+    public void refrescarTable() {
         if (tabla_clientes_seleccionada) {
             modeloTablaClientes.refreshTableModel(getClientes());
             jTable.setModel(modeloTablaClientes);
-            jTextFieldBarraBusqueda.setVisible(true);
             jTextFieldBarraBusqueda.setText("");
-            jButtonBuscar.setVisible(true);
             jLabelTitulo.setText("Clientes");
         } else {
             modeloTablaReservas.refreshTableModel(getReservas());
             jTable.setModel(modeloTablaReservas);
-            jTextFieldBarraBusqueda.setVisible(false);
-            jButtonBuscar.setVisible(false);
+            jTextFieldBarraBusqueda.setText("");
             jLabelTitulo.setText("Reservas");
         }
         TableCellRenderer buttonRenderer = new JTableButtonRenderer();
@@ -305,6 +305,13 @@ public class VentanaPrincipal extends javax.swing.JFrame {
     private void refrescarTableClientes() {
         modeloTablaClientes.refreshTableModel(getClientes(jTextFieldBarraBusqueda.getText()));
         jTable.setModel(modeloTablaClientes);
+        TableCellRenderer buttonRenderer = new JTableButtonRenderer();
+        jTable.getColumn("BORRAR").setCellRenderer(buttonRenderer);
+    }
+
+    private void refrescarTalaReservas() {
+        modeloTablaReservas.refreshTableModel(getReservas(jTextFieldBarraBusqueda.getText()));
+        jTable.setModel(modeloTablaReservas);
         TableCellRenderer buttonRenderer = new JTableButtonRenderer();
         jTable.getColumn("BORRAR").setCellRenderer(buttonRenderer);
     }
@@ -613,9 +620,13 @@ public class VentanaPrincipal extends javax.swing.JFrame {
     }//GEN-LAST:event_jButtonReservasActionPerformed
 
     private void jButtonBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonBuscarActionPerformed
-        if(!jTextFieldBarraBusqueda.getText().equals(""))
-            refrescarTableClientes();
-        else 
+        if (!jTextFieldBarraBusqueda.getText().equals(""))
+            if (tabla_clientes_seleccionada) {
+                refrescarTableClientes();
+            } else {
+                refrescarTalaReservas();
+            }
+        else
             refrescarTable();
     }//GEN-LAST:event_jButtonBuscarActionPerformed
 
@@ -629,25 +640,34 @@ public class VentanaPrincipal extends javax.swing.JFrame {
 
     private void jButtonAñadirPartidoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonAñadirPartidoActionPerformed
         try {
-            String emailReserva = JOptionPane.showInputDialog("Email del usuario");
-            flujosalida.writeUTF("3," + emailReserva);
-            String mensaje = flujoentrada.readUTF();
+            String email = JOptionPane.showInputDialog("Email del usuario");
+            if (email != null) {
+                if (!email.equals("")) {
+                    Pattern pattern = Pattern.compile("^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$");
+                    Matcher mather = pattern.matcher(email);
 
-            if (emailReserva != null) {
-                clienteReserva = new Cliente(mensaje + "," + emailReserva);
+                    if (mather.find() == true) {
+                        flujosalida.writeUTF("3," + email);
+                        String mensaje = flujoentrada.readUTF();
+                        clienteReserva = new Cliente(mensaje + "," + email);
 
-                if (mensaje.equals("No se ha encontrado ningún usuario con ese nombre")) {
-                    JOptionPane.showMessageDialog(null, "El email introducido no es válido", "ERROR",
-                            JOptionPane.ERROR_MESSAGE);
-                } else {
-                    if (JOptionPane.showConfirmDialog(null, "La reserva se hará a nombre de: " + clienteReserva.getNombre() + " " + clienteReserva.getApellidos() + ", estás de acuerdo?", "ADVERTENCIA",
-                            JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
-                        limpiarNuevoPartido();
-                        jDialogNuevoPartido.setSize(345, 352);
-                        jDialogNuevoPartido.setLocationRelativeTo(null);
-                        jDialogNuevoPartido.setVisible(true);
+                        if (mensaje.equals("No se ha encontrado ningún usuario con ese nombre")) {
+                            JOptionPane.showMessageDialog(null, "El email introducido no es válido", "ERROR",
+                                    JOptionPane.ERROR_MESSAGE);
+                        } else {
+                            if (JOptionPane.showConfirmDialog(null, "La reserva se hará a nombre de: " + clienteReserva.getNombre() + " " + clienteReserva.getApellidos() + ", estás de acuerdo?", "ADVERTENCIA",
+                                    JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+                                limpiarNuevoPartido();
+                                jDialogNuevoPartido.setSize(345, 352);
+                                jDialogNuevoPartido.setLocationRelativeTo(null);
+                                jDialogNuevoPartido.setVisible(true);
+                            } else {
+                                email = "";
+                            }
+                        }
                     } else {
-                        emailReserva = "";
+                        JOptionPane.showMessageDialog(null, "El email introducido no es válido", "ERROR",
+                                JOptionPane.ERROR_MESSAGE);
                     }
                 }
             }
@@ -800,7 +820,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
                             + "," + nivelPadel + "," + nivelBasket + "," + nivelBalonmano);
                     String mensaje = "";
                     mensaje = flujoentrada.readUTF();
-                    System.out.println("EL MENSAJE: " + mensaje);
+                    //System.out.println("EL MENSAJE: " + mensaje);
                     if (mensaje.equals("Insertado nuevo usuario correctamente")) {
                         JOptionPane.showMessageDialog(null, "Usuario creado");
                         cerrarCreacionUsuario();
@@ -830,7 +850,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
             flujosalida.writeUTF("1," + login.getCorreo() + "," + login.getPwd());
             String mensaje = "";
             mensaje = flujoentrada.readUTF();
-            System.out.println("EL MENSAJE: " + mensaje);
+            //System.out.println("EL MENSAJE: " + mensaje);
             if (mensaje.equals("true")) {
                 logeado = true;
                 jDialogLogin.setVisible(false);
@@ -852,8 +872,8 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         jDialogNuevoUsuario.setVisible(false);
     }
 
-    private List<Cliente> getClientes() {
-        List<Cliente> lista = new ArrayList<>();
+    private TreeSet<Cliente> getClientes() {
+        TreeSet<Cliente> lista = new TreeSet<>();
         String[] mensajes = null;
         try {
             flujosalida.writeUTF("4, ");
@@ -875,11 +895,11 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         return null;
     }
 
-    private List<Cliente> getClientes(String busqueda) {
-        List<Cliente> lista = new ArrayList<>();
+    private TreeSet<Cliente> getClientes(String busqueda) {
+        TreeSet<Cliente> lista = new TreeSet<>();
         String[] mensajes = null;
         try {
-            flujosalida.writeUTF("4,"+busqueda);
+            flujosalida.writeUTF("4," + busqueda);
 
             String mensaje = "";
             mensaje = flujoentrada.readUTF();
@@ -889,6 +909,29 @@ public class VentanaPrincipal extends javax.swing.JFrame {
                 mensajes = mensaje.split(";");
                 for (String arg : mensajes) {
                     lista.add(new Cliente(arg));
+                }
+            }
+            return lista;
+        } catch (IOException ex) {
+            Logger.getLogger(VentanaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
+    }
+
+    private List<Reserva> getReservas(String text) {
+        List<Reserva> lista = new ArrayList<>();
+        String[] mensajes = null;
+        try {
+            flujosalida.writeUTF("19," + text);
+
+            String mensaje = "";
+            mensaje = flujoentrada.readUTF();
+            if (mensaje.equals("No se han encontrado reservas almacenadas")) {
+                JOptionPane.showMessageDialog(null, "No se han encontrado clientes almacenados");
+            } else {
+                mensajes = mensaje.split(";");
+                for (String arg : mensajes) {
+                    lista.add(new Reserva(arg));
                 }
             }
             return lista;
@@ -1029,7 +1072,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         jDialogDisponibilidad.setLocationRelativeTo(null);
         jDialogDisponibilidad.setVisible(true);
 
-        System.out.println(jTableDisponibilidad.getRowCount());
+        //System.out.println(jTableDisponibilidad.getRowCount());
     }
 
     private List<Integer> getPistasDeportivas(int deporte_id) {

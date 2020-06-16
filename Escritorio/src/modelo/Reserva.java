@@ -5,12 +5,18 @@
  */
 package modelo;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
+
 /**
  *
  * @author sergio
  */
 public class Reserva {
-    
+
     private int id;
     private String nombre;
     private String pista;
@@ -64,7 +70,11 @@ public class Reserva {
     }
 
     public String getFecha() {
-        return fecha;
+        LocalDate date = LocalDate.parse(fecha);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd LLLL yyyy");
+        String formattedString = date.format(formatter);
+
+        return formattedString;
     }
 
     public void setFecha(String fecha) {
@@ -77,6 +87,6 @@ public class Reserva {
 
     public void setJugadores(int jugadores) {
         this.jugadores = jugadores;
-    }   
-    
+    }
+
 }

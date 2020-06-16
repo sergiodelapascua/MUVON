@@ -277,6 +277,7 @@ public class NuevoUsuario extends javax.swing.JPanel {
     private void jButtonNuevoUsuarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonNuevoUsuarioActionPerformed
         // TODO add your handling code here:
         parent.crearUsuario();
+        parent.refrescarTable();
     }//GEN-LAST:event_jButtonNuevoUsuarioActionPerformed
 
     private void jButtonCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonCancelarActionPerformed

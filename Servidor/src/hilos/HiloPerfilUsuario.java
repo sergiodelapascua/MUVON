@@ -36,10 +36,13 @@ public class HiloPerfilUsuario extends Thread{
     public void run() {
         String deporte_id = "";
         String nivel = "";
+        int avatar = 0;
         String mensaje = "";
         try (Connection conexion = DriverManager.getConnection(url, username, password);
             PreparedStatement p = conexion.prepareStatement("SELECT deporte_id, nivel FROM usuario_deporte "
-                    + "WHERE usuario_id = (SELECT usuario_id from usuario where correo = (?))");) {
+                    + "WHERE usuario_id = (SELECT usuario_id from usuario where correo = (?))");
+            PreparedStatement p2 = conexion.prepareStatement("SELECT avatar_id FROM usuario "
+                    + "WHERE correo = (?)");) {
             p.setString(1, correo);
             ResultSet rset = p.executeQuery();
             while (rset.next()) {
@@ -50,6 +53,18 @@ public class HiloPerfilUsuario extends Thread{
             }
             
             fsalida.writeUTF((mensaje.equals(""))? "Error":mensaje);
+            
+            p2.setString(1,correo);
+            
+            ResultSet rset2 = p2.executeQuery();
+            while (rset2.next()) {
+                avatar = rset2.getInt("avatar_id");   
+                mensaje = ""+avatar;
+                System.out.println("ID DEL AVATAR "+mensaje);
+            }
+            
+            fsalida.writeUTF((mensaje.equals(""))? "Error al devolver el avatar":mensaje);
+            
             
         } catch (SQLException ex) {
             ex.printStackTrace();

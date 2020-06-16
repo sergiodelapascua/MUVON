@@ -37,18 +37,19 @@ public class HiloNotificacion extends Thread {
         String franja = "";
         String desc = "";
         String mensaje = "";
-        try ( Connection conexion = DriverManager.getConnection(url, username, password);  PreparedStatement p = conexion.prepareStatement("select h.franja as franja, pi.descripcion as desc\n"
+        try ( Connection conexion = DriverManager.getConnection(url, username, password);  
+                PreparedStatement p = conexion.prepareStatement("select h.franja as franja, pi.descripcion as descripcion\n"
                 + "from usuario_partido up, partido p, horario h, pista pi\n"
                 + "where up.usuario_id = (Select usuario_id from usuario where correo = (?))\n"
                 + "AND up.partido_id = p .partido_id\n"
                 + "and p.horario_id = h.horario_id\n"
                 + "and p.pista_id = pi.pista_id\n"
-                + "and p.fecha = DATE(NOW()))");) {
+                + "and p.fecha = DATE(NOW())");) {
             p.setString(1, c);
             ResultSet rset = p.executeQuery();
             while (rset.next()) {
                 franja = rset.getString("franja");
-                desc = rset.getString("desc");
+                desc = rset.getString("descripcion");
                 mensaje += franja+","+desc+";";
             }
 

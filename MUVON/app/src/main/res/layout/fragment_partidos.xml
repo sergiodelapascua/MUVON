@@ -51,10 +51,32 @@
             android:clickable="true"
             android:src="@drawable/ic_partidos" />-->
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerViewPartidos"
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_margin="8dp"
-            android:layout_height="match_parent"/>
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginBottom="16dp">
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/floatingActionButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentBottom="true"
+                android:layout_gravity="end|bottom"
+                android:layout_margin="16dp"
+                android:background="@android:color/transparent"
+                android:backgroundTint="@android:color/white"
+                android:src="@drawable/ic_partidos"
+                app:rippleColor="@android:color/white" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerViewPartidos"
+                android:layout_width="match_parent"
+                android:layout_height="365dp"
+                android:layout_margin="8dp" />
+        </RelativeLayout>
+
     </LinearLayout>
 </FrameLayout>

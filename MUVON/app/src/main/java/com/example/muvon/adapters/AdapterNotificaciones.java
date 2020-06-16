@@ -5,6 +5,7 @@ import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -43,6 +44,7 @@ public class AdapterNotificaciones extends RecyclerView.Adapter<AdapterNotificac
 
         final Notificacion notificacion = notificaciones.get(i);
 
+        viewHolder.icono.setBackgroundResource(elegirImagen(notificacion.getPista()));
         viewHolder.pista_notificacion.setText(ellipsize(notificacion.getPista()));
         viewHolder.horario_notificacion.setText(notificacion.getHorario());
     }
@@ -58,12 +60,14 @@ public class AdapterNotificaciones extends RecyclerView.Adapter<AdapterNotificac
     public class ViewHolder extends RecyclerView.ViewHolder {
 
         LinearLayout linearLayout;
+        ImageView icono;
         TextView pista_notificacion;
         TextView horario_notificacion;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            linearLayout = itemView.findViewById(R.id.fila_partido);
+            linearLayout = itemView.findViewById(R.id.fila_notificacion);
+            icono = itemView.findViewById(R.id.icono_noti);
             pista_notificacion = itemView.findViewById(R.id.pista_notificacion);
             horario_notificacion = itemView.findViewById(R.id.horario_notificacion);
         }
@@ -75,5 +79,16 @@ public class AdapterNotificaciones extends RecyclerView.Adapter<AdapterNotificac
             return input;
         }
         return input.substring(0, maxCharacters) + "...";
+    }
+
+    private int elegirImagen(String pista) {
+        System.out.println("NOMBRE DE LA PISTA "+pista);
+        if(pista.contains("Padel"))
+            return R.drawable.padel;
+        else if(pista.contains("Futbol"))
+            return R.drawable.futbol;
+        else if(pista.contains("Basket"))
+            return R.drawable.basket;
+        return 0;
     }
 }

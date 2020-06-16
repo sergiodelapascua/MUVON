@@ -14,6 +14,8 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.muvon.R;
+import com.example.muvon.Util.Constantes;
+import com.example.muvon.modelo.Cliente;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -21,7 +23,7 @@ import java.io.IOException;
 import java.net.ConnectException;
 import java.net.Socket;
 
-public class Registro extends AppCompatActivity {
+public class Registro extends AppCompatActivity  implements Constantes {
 
     EditText correo;
     EditText nombre;
@@ -35,8 +37,6 @@ public class Registro extends AppCompatActivity {
     SeekBar balonmano;
     Button crearUsuario;
 
-    String host = "192.168.1.81";
-    int puerto = 4444;
     DataOutputStream fsalida = null;
     DataInputStream fentrada = null;
     static Socket socket = null;
@@ -64,17 +64,19 @@ public class Registro extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 int sexo = (hombre.isChecked()) ? 0 : 1;
-                String email = String.valueOf(correo.getText());
+                final String email = String.valueOf(correo.getText());
+                final String nom = String.valueOf(nombre.getText());
+                final String apell = String.valueOf(apellidos.getText());
 
                 // onClick of button perform this simplest code.
                 if (Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-                    if (pwd1.getText().equals(pwd2.getText())) {
+                    if (pwd1.getText().toString().equals(pwd2.getText().toString())) {
                         escribir("2," + nombre.getText() + "," + apellidos.getText() + "," + email + ","
                                 + pwd1.getText() + "," + sexo + "," + futbol.getProgress()
                                 + "," + padel.getProgress() + "," + basket.getProgress() + "," + balonmano.getProgress());
                         String mensaje = "";
                         mensaje = leer();
-                        System.out.println("EL MENSAJE LEIDO: " + mensaje);
+                        //System.out.println("EL MENSAJE LEIDO: " + mensaje);
                         if (mensaje.equals("Insertado nuevo usuario correctamente")) {
                             DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
                                 @Override
@@ -82,7 +84,16 @@ public class Registro extends AppCompatActivity {
                                     switch (which) {
                                         case DialogInterface.BUTTON_POSITIVE:
                                             Intent intent = new Intent(Registro.this, Principal.class);
+                                            final Cliente cl = new Cliente(nom, apell, email);
+                                            //System.out.println("CLIENTE CREADOOO "+cl.toString());
+                                            intent.putExtra("cliente",cl);
                                             startActivity(intent);
+                                            try {
+                                                socket.close();
+                                            } catch (IOException e) {
+                                                e.printStackTrace();
+                                            }
+                                            finish();
                                             break;
 
                                         case DialogInterface.BUTTON_NEGATIVE:

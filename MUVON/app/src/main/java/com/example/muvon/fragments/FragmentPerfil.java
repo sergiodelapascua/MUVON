@@ -38,6 +38,7 @@ public class FragmentPerfil extends Fragment {
     private Principal principal;
 
     TextView nombre;
+    ImageView perfil;
     ImageView futbol;
     ImageView padel;
     ImageView basket;
@@ -54,46 +55,56 @@ public class FragmentPerfil extends Fragment {
 
         //ly = view.findViewById(R.id.no_connection);
 
-        context = this.getContext();
+        perfil = view.findViewById(R.id.imagen_perfil);
+        nombre = view.findViewById(R.id.nombre_perfil);
+        nombre.setText(principal.cliente.getNombre() + " " + principal.cliente.getApellidos());
+        futbol = view.findViewById(R.id.futbol_estrellas);
+        padel = view.findViewById(R.id.padel_estrellas);
+        basket = view.findViewById(R.id.basket_estrellas);
+        balonmano = view.findViewById(R.id.balonmano_estrellas);
 
         principal.conectar();
         principal.escribir("12," + principal.cliente.getCorreo());
         String mensaje = principal.leer();
-        //System.out.println("LO QUE HA LEIDOOOOOOO\n"+mensaje);
+        System.out.println("LO QUE HA LEIDOOOOOOO\n" + mensaje);
         String[] arg = mensaje.split(";");
         interpretarArgumentos(arg);
+        String foto = principal.leer();
+        System.out.println("LO QUE HA LEIDOOOOOOO22222\n" + foto);
+        cargarFoto(foto);
 
-        nombre = view.findViewById(R.id.nombre_perfil_usuario);
-        nombre.setText(principal.cliente.getNombre() + " " + principal.cliente.getApellidos());
-        futbol = view.findViewById(R.id.futbol_estrellas_usuario);
-        padel = view.findViewById(R.id.padel_estrellas_usuario);
-        basket = view.findViewById(R.id.basket_estrellas_usuario);
-        balonmano = view.findViewById(R.id.balonmano_estrellas_usuario);
-
-        recyclerView = view.findViewById(R.id.recyclerViewPartidosPerfilActivity);
-        layoutManager = new LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false);
+        recyclerView = view.findViewById(R.id.recyclerViewPartidosPerfil);
+        layoutManager = new LinearLayoutManager(this.getContext(), LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setHasFixedSize(true);
         recyclerView.setItemViewCacheSize(20);
         recyclerView.setDrawingCacheEnabled(true);
         recyclerView.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
 
-        AdapterPartido a = new AdapterPartido(pedirLista(), R.layout.fila_partidos, principal, new AdapterPartido.OnItemClickListener() {
-            @Override
-            public void onItemClick(Reserva reserva, int position) {
-                Intent intent = new Intent(principal, DetallesPartido2.class);
-                intent.putExtra("reserva", reserva);
-                try {
-                    principal.socket.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
+        List<Reserva> lista = pedirLista();
+        LinearLayout linear = view.findViewById(R.id.sin_partido_creado_fragment);
+
+        if (lista == null) {
+            linear.setVisibility(View.VISIBLE);
+        } else {
+            linear.setVisibility(View.GONE);
+            AdapterPartido a = new AdapterPartido(lista, R.layout.fila_partidos, principal, new AdapterPartido.OnItemClickListener() {
+                @Override
+                public void onItemClick(Reserva reserva, int position) {
+                    Intent intent = new Intent(principal, DetallesPartido2.class);
+                    intent.putExtra("reserva", reserva);
+                    intent.putExtra("login", principal.cliente);
+                    try {
+                        principal.socket.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    startActivity(intent);
                 }
-                startActivity(intent);
-            }
-        });
+            });
 
-        recyclerView.setAdapter(a);
-
+            recyclerView.setAdapter(a);
+        }
         return view;
 
     }
@@ -108,14 +119,23 @@ public class FragmentPerfil extends Fragment {
         if (mensaje.equals("No se han encontrado reservas almacenadas")) {
             System.err.println("ERROR al buscar partidos del ususario " + principal.cliente.toString());
         } else {
-            mensajes = mensaje.split(";");
-            for (String arg : mensajes) {
-                lista.add(new Reserva(arg));
+            if (!mensaje.equals("")) {
+                mensajes = mensaje.split(";");
+                for (String arg : mensajes) {
+                    lista.add(new Reserva(arg));
+                }
+                System.out.println("RESERVAS " + lista);
+                return lista;
             }
-            System.out.println("RESERVAS " + lista);
-            return lista;
         }
         return null;
+    }
+
+    private void cargarFoto(String mensaje) {
+        if(mensaje.equals("1"))
+            perfil.setBackgroundResource(R.drawable.female_ic);
+        else
+            perfil.setBackgroundResource(R.drawable.male_ic);
     }
 
     private void interpretarArgumentos(String[] arg) {
@@ -147,5 +167,26 @@ public class FragmentPerfil extends Fragment {
                 return R.drawable.cinco_stars_ic;
         }
         return -1;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        AdapterPartido a = new AdapterPartido(pedirLista(), R.layout.fila_partidos, principal, new AdapterPartido.OnItemClickListener() {
+            @Override
+            public void onItemClick(Reserva reserva, int position) {
+                Intent intent = new Intent(principal, DetallesPartido2.class);
+                intent.putExtra("reserva", reserva);
+                intent.putExtra("login", principal.cliente);
+                try {
+                    principal.socket.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                startActivity(intent);
+            }
+        });
+        recyclerView.setAdapter(a);
     }
 }

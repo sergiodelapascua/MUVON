@@ -193,17 +193,17 @@
                     android:id="@+id/checkBoxFutbol"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
                     android:layout_marginLeft="24dp"
                     android:textSize="24sp"
                     android:text="Fútbol" />
 
                 <SeekBar
                     android:id="@+id/seekBarFutbol"
-                    android:layout_width="wrap_content"
+                    android:layout_width="100dp"
                     android:layout_height="wrap_content"
                     android:padding="16dp"
                     android:max="5"
+                    android:layout_gravity="right"
                     android:min="0"
                     android:layout_weight="2" />
 

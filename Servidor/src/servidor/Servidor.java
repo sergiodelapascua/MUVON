@@ -35,12 +35,7 @@ public class Servidor {
 
         System.out.println("Servidor iniciado...");
 
-        int cont = 0;
-
         while (true) {
-            cont++;
-            System.out.println("Esperando la conexión de usuarios " + cont);
-
             Socket socket1 = null;
             try {
 

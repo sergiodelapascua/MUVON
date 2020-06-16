@@ -39,7 +39,7 @@ public class HiloBorrarReserva extends Thread{
 
             p.setInt(1, id);
             int afectados = p.executeUpdate();            
-            fsalida.writeUTF((afectados == 1)? "OK":"");
+            fsalida.writeUTF((afectados == 1)? "Se ha borrado":"");
             
         } catch (SQLException ex) {
             ex.printStackTrace();

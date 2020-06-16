@@ -8,9 +8,11 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.muvon.R;
+import com.example.muvon.Util.Constantes;
 import com.example.muvon.adapters.AdapterPartido;
 import com.example.muvon.modelo.Cliente;
 import com.example.muvon.modelo.Reserva;
@@ -23,16 +25,16 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PerfilUsuario extends AppCompatActivity {
+public class PerfilUsuario extends AppCompatActivity implements Constantes {
 
-    private static Cliente cliente;
-    String host = "192.168.1.81";
-    int puerto = 4444;
+    private static Cliente usuarioRandom;
+    private static Cliente clienteLogin;
     DataOutputStream fsalida = null;
     DataInputStream fentrada = null;
     static Socket socket = null;
 
     TextView nombre;
+    ImageView perfil;
     ImageView futbol;
     ImageView padel;
     ImageView basket;
@@ -43,25 +45,31 @@ public class PerfilUsuario extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        //System.out.println("HA ENTRADO EN PERFIL USUARIO");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_perfil_usuario);
 
         Intent intent = getIntent();
-        cliente = (Cliente) intent.getSerializableExtra("usuario");
+        usuarioRandom = (Cliente) intent.getSerializableExtra("usuario");
+        clienteLogin = (Cliente) intent.getSerializableExtra("login");
 
-        nombre = findViewById(R.id.nombre_perfil_usuario);
-        nombre.setText(cliente.getNombre()+ " "+cliente.getApellidos());
+        perfil = findViewById(R.id.imagen_perfil_activity);
+        nombre = findViewById(R.id.nombre_perfil_usuario_activity);
+        nombre.setText(usuarioRandom.getNombre()+ " "+ usuarioRandom.getApellidos());
         futbol = findViewById(R.id.futbol_estrellas_usuario);
         padel = findViewById(R.id.padel_estrellas_usuario);
         basket = findViewById(R.id.basket_estrellas_usuario);
         balonmano = findViewById(R.id.balonmano_estrellas_usuario);
 
         conectar();
-        escribir("12,"+cliente.getCorreo());
+        escribir("12,"+ usuarioRandom.getCorreo());
         String mensaje = leer();
         //System.out.println("LO QUE HA LEIDOOOOOOO\n"+mensaje);
         String[] arg = mensaje.split(";");
         interpretarArgumentos(arg);
+        mensaje = leer();
+        //System.out.println("LO QUE HA LEIDOOOOOOO\n"+mensaje);
+        cargarFoto(mensaje);
 
         recyclerView = findViewById(R.id.recyclerViewPartidosPerfilActivity);
         layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
@@ -71,33 +79,43 @@ public class PerfilUsuario extends AppCompatActivity {
         recyclerView.setDrawingCacheEnabled(true);
         recyclerView.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
 
-        AdapterPartido a = new AdapterPartido(pedirLista(), R.layout.fila_partidos, this, new AdapterPartido.OnItemClickListener() {
-            @Override
-            public void onItemClick(Reserva reserva, int position) {
-                Intent intent = new Intent(PerfilUsuario.this, DetallesPartido2.class);
-                intent.putExtra("reserva", reserva);
-                try {
-                    socket.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
+        List<Reserva> lista = pedirLista();
+        LinearLayout linear = findViewById(R.id.sin_partido_creado_activity);
+
+        if (lista == null) {
+            linear.setVisibility(View.VISIBLE);
+        } else {
+            linear.setVisibility(View.GONE);
+            AdapterPartido a = new AdapterPartido(lista, R.layout.fila_partidos, this, new AdapterPartido.OnItemClickListener() {
+                @Override
+                public void onItemClick(Reserva reserva, int position) {
+                    Intent intent = new Intent(PerfilUsuario.this, DetallesPartido2.class);
+                    intent.putExtra("reserva", reserva);
+                    intent.putExtra("login", clienteLogin);
+                    startActivity(intent);
                 }
-                startActivity(intent);
-            }
-        });
+            });
 
-        recyclerView.setAdapter(a);
+            recyclerView.setAdapter(a);
+        }
+    }
 
+    private void cargarFoto(String mensaje) {
+        if(mensaje.equals("1"))
+            perfil.setBackgroundResource(R.drawable.female_ic);
+        else
+            perfil.setBackgroundResource(R.drawable.male_ic);
     }
 
     private List<Reserva> pedirLista(){
         List<Reserva> lista = new ArrayList<>();
         String[] mensajes = null;
-        escribir("14,"+cliente.getCorreo());
+        escribir("14,"+ usuarioRandom.getCorreo());
 
         String mensaje = "";
         mensaje = leer();
         if (mensaje.equals("No se han encontrado reservas almacenadas")) {
-            System.err.println("ERROR al buscar partidos del ususario "+cliente.toString());
+            System.err.println("ERROR al buscar partidos del ususario "+ usuarioRandom.toString());
         } else {
             mensajes = mensaje.split(";");
             for (String arg : mensajes) {

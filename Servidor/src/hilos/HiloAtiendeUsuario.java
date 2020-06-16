@@ -29,11 +29,11 @@ public class HiloAtiendeUsuario extends Thread {
         fsalida = dos;
         fentrada = dis;
     }
-    
-     @Override
+
+    @Override
     public void run() {
         try {
-            while(true){
+            while (true) {
                 mensajes = fentrada.readUTF().split(",");
                 switch (mensajes[0]) {
                     case "1":
@@ -81,11 +81,23 @@ public class HiloAtiendeUsuario extends Thread {
                     case "15":
                         comprobarNotificaciones(mensajes[1]);
                         break;
+                    case "16":
+                        unirsePartido(mensajes[1], mensajes[2]);
+                        break;
+                    case "17":
+                        abandonarPartido(mensajes[1], mensajes[2]);
+                        break;
+                    case "18":
+                        extraerListaPorDeporte(mensajes[1]);
+                        break;
+                    case "19":
+                        listaReservasOrdenada(mensajes[1]);
+                        break;
                     default:
-                        System.out.println("Se ha liado");
+                        System.out.println("Se ha liado en el hilo que atiende al usuario");
                         System.exit(0);
-                }                    
-            }        
+                }
+            }
         } catch (EOFException e) {
             //Se ha cerrao un cliente inesperadamente
         } catch (IOException ex) {
@@ -100,41 +112,41 @@ public class HiloAtiendeUsuario extends Thread {
             }
         }
     }
-    
+
     private void login(String[] mensajes) {
         try {
-            HiloLogin hl = new HiloLogin(fsalida,mensajes[1], mensajes[2]);
+            HiloLogin hl = new HiloLogin(fsalida, mensajes[1], mensajes[2]);
             hl.run();
             hl.join();
         } catch (InterruptedException ex) {
             Logger.getLogger(HiloAtiendeUsuario.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
+
     private void loginMovil(String[] mensajes) {
         try {
-            HiloLogin hl = new HiloLogin(fsalida,mensajes[1], mensajes[2], true);
+            HiloLogin hl = new HiloLogin(fsalida, mensajes[1], mensajes[2], true);
             hl.run();
             hl.join();
         } catch (InterruptedException ex) {
             Logger.getLogger(HiloAtiendeUsuario.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
+
     private void crearUsuario(String[] mensajes) {
         try {
             //nombre, apellido, correo, pwd, sexo, futbol, padel, basket, balonmano
-            HiloInsertarUsuario hl = new HiloInsertarUsuario(fsalida,mensajes[1], mensajes[2], mensajes[3], mensajes[4], mensajes[5],mensajes[6], mensajes[7], mensajes[8], mensajes[9]);
+            HiloInsertarUsuario hl = new HiloInsertarUsuario(fsalida, mensajes[1], mensajes[2], mensajes[3], mensajes[4], mensajes[5], mensajes[6], mensajes[7], mensajes[8], mensajes[9]);
             hl.run();
             hl.join();
         } catch (InterruptedException ex) {
             Logger.getLogger(HiloAtiendeUsuario.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
-    private void comprobarCorreo(String correo){
+
+    private void comprobarCorreo(String correo) {
         try {
-            HiloCompruebaCorreo hl = new HiloCompruebaCorreo(fsalida,correo);
+            HiloCompruebaCorreo hl = new HiloCompruebaCorreo(fsalida, correo);
             hl.run();
             hl.join();
         } catch (InterruptedException ex) {
@@ -145,10 +157,11 @@ public class HiloAtiendeUsuario extends Thread {
     private void extraerListaClientes(String busqueda) {
         HiloListaClientes hl = null;
         try {
-            if(busqueda.equals(" "))
+            if (busqueda.equals(" ")) {
                 hl = new HiloListaClientes(fsalida);
-            else
+            } else {
                 hl = new HiloListaClientes(fsalida, busqueda);
+            }
             hl.run();
             hl.join();
         } catch (InterruptedException ex) {
@@ -158,7 +171,7 @@ public class HiloAtiendeUsuario extends Thread {
 
     private void borrarCliente(String correo) {
         try {
-            HiloBorrarCliente hl = new HiloBorrarCliente(fsalida,correo);
+            HiloBorrarCliente hl = new HiloBorrarCliente(fsalida, correo);
             hl.run();
             hl.join();
         } catch (InterruptedException ex) {
@@ -178,7 +191,7 @@ public class HiloAtiendeUsuario extends Thread {
 
     private void borrarReserva(String id) {
         try {
-            HiloBorrarReserva hl = new HiloBorrarReserva(fsalida,Integer.parseInt(id));
+            HiloBorrarReserva hl = new HiloBorrarReserva(fsalida, Integer.parseInt(id));
             hl.run();
             hl.join();
         } catch (InterruptedException ex) {
@@ -188,7 +201,7 @@ public class HiloAtiendeUsuario extends Thread {
 
     private void buscarPistasOcupadas(String deporte_id, String date) {
         try {
-            HiloPistasOcupadas hl = new HiloPistasOcupadas(fsalida,Integer.parseInt(deporte_id),date);
+            HiloPistasOcupadas hl = new HiloPistasOcupadas(fsalida, Integer.parseInt(deporte_id), date);
             hl.run();
             hl.join();
         } catch (InterruptedException ex) {
@@ -198,7 +211,7 @@ public class HiloAtiendeUsuario extends Thread {
 
     private void crearReserva(String correo, String pista_id, String horario_id, String date, String max, String base) {
         try {
-            HiloCrearReserva hl = new HiloCrearReserva(fsalida,correo, pista_id, horario_id, date, max, base);
+            HiloCrearReserva hl = new HiloCrearReserva(fsalida, correo, pista_id, horario_id, date, max, base);
             hl.run();
             hl.join();
         } catch (InterruptedException ex) {
@@ -208,7 +221,7 @@ public class HiloAtiendeUsuario extends Thread {
 
     private void listarParticipantes(String mensaje) {
         try {
-            HiloListaParticipantes hl = new HiloListaParticipantes(fsalida,mensaje);
+            HiloListaParticipantes hl = new HiloListaParticipantes(fsalida, mensaje);
             hl.run();
             hl.join();
         } catch (InterruptedException ex) {
@@ -218,7 +231,7 @@ public class HiloAtiendeUsuario extends Thread {
 
     private void perfilUsuario(String mensaje) {
         try {
-            HiloPerfilUsuario hl = new HiloPerfilUsuario(fsalida,mensaje);
+            HiloPerfilUsuario hl = new HiloPerfilUsuario(fsalida, mensaje);
             hl.run();
             hl.join();
         } catch (InterruptedException ex) {
@@ -228,7 +241,7 @@ public class HiloAtiendeUsuario extends Thread {
 
     private void invitados(String mensaje) {
         try {
-            HiloInvitados hl = new HiloInvitados(fsalida,mensaje);
+            HiloInvitados hl = new HiloInvitados(fsalida, mensaje);
             hl.run();
             hl.join();
         } catch (InterruptedException ex) {
@@ -238,7 +251,7 @@ public class HiloAtiendeUsuario extends Thread {
 
     private void partidoDeUsuario(String mensaje) {
         try {
-            HiloListaPartidosCreadoPorUsuario hl = new HiloListaPartidosCreadoPorUsuario(fsalida,mensaje);
+            HiloListaPartidosCreadoPorUsuario hl = new HiloListaPartidosCreadoPorUsuario(fsalida, mensaje);
             hl.run();
             hl.join();
         } catch (InterruptedException ex) {
@@ -248,13 +261,51 @@ public class HiloAtiendeUsuario extends Thread {
 
     private void comprobarNotificaciones(String mensaje) {
         try {
-            HiloNotificacion hl = new HiloNotificacion(fsalida,mensaje);
+            HiloNotificacion hl = new HiloNotificacion(fsalida, mensaje);
             hl.run();
             hl.join();
         } catch (InterruptedException ex) {
             Logger.getLogger(HiloAtiendeUsuario.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
-    
+
+    private void unirsePartido(String correo, String idp) {
+        try {
+            HiloUnirsePartido hl = new HiloUnirsePartido(fsalida, correo, idp);
+            hl.run();
+            hl.join();
+        } catch (InterruptedException ex) {
+            Logger.getLogger(HiloAtiendeUsuario.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    private void abandonarPartido(String correo, String idp) {
+        try {
+            HiloAbandonarPartido hl = new HiloAbandonarPartido(fsalida, correo, idp);
+            hl.run();
+            hl.join();
+        } catch (InterruptedException ex) {
+            Logger.getLogger(HiloAtiendeUsuario.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    private void extraerListaPorDeporte(String idp) {
+        try {
+            HiloListaReservaPorDeporte hl = new HiloListaReservaPorDeporte(fsalida, idp);
+            hl.run();
+            hl.join();
+        } catch (InterruptedException ex) {
+            Logger.getLogger(HiloAtiendeUsuario.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    private void listaReservasOrdenada(String mensaje) {
+        try {
+            HiloListaReservaOrdenada hl = new HiloListaReservaOrdenada(fsalida, mensaje);
+            hl.run();
+            hl.join();
+        } catch (InterruptedException ex) {
+            Logger.getLogger(HiloAtiendeUsuario.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
 }

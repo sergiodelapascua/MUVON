@@ -4,12 +4,16 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.NavigationUI;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
 import com.example.muvon.R;
+import com.example.muvon.Util.Constantes;
+import com.example.muvon.adapters.AdapterPartido;
 import com.example.muvon.fragments.FragmentPartidos;
 import com.example.muvon.modelo.Cliente;
 import com.example.muvon.modelo.Reserva;
@@ -20,12 +24,12 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.ConnectException;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.List;
 
-public class Principal extends AppCompatActivity {
+public class Principal extends AppCompatActivity implements Constantes {
 
     public static Cliente cliente;
-    String host = "192.168.1.81";
-    int puerto = 4444;
     DataOutputStream fsalida = null;
     DataInputStream fentrada = null;
     public static Socket socket = null;
@@ -45,11 +49,11 @@ public class Principal extends AppCompatActivity {
 
         conectar();
 
-        System.out.println(cliente);
+        //System.out.println("CLIENTE QUE LLEGA "+cliente);
     }
 
     public void escribir(String mensaje) {
-        System.out.println("MENSAJE QUE SALE "+mensaje);
+        //System.out.println("MENSAJE QUE SALE "+mensaje);
         try {
             fsalida.writeUTF(mensaje);
         } catch (IOException e) {
@@ -84,6 +88,7 @@ public class Principal extends AppCompatActivity {
     @Override
     protected void onRestart() {
         super.onRestart();
-        conectar();
+        if(!socket.isClosed())
+            conectar();
     }
 }
