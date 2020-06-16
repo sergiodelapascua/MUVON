@@ -191,7 +191,8 @@
 
                 <TextView
                     android:id="@+id/checkBoxFutbol"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="24dp"
                     android:textSize="24sp"
@@ -199,13 +200,13 @@
 
                 <SeekBar
                     android:id="@+id/seekBarFutbol"
-                    android:layout_width="100dp"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
                     android:layout_height="wrap_content"
-                    android:padding="16dp"
+                    android:layout_gravity="end"
                     android:max="5"
-                    android:layout_gravity="right"
                     android:min="0"
-                    android:layout_weight="2" />
+                    android:padding="16dp" />
 
             </LinearLayout>
 
@@ -217,7 +218,7 @@
 
                 <TextView
                     android:id="@+id/checkBoxPadel"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:layout_marginLeft="24dp"
@@ -226,12 +227,12 @@
 
                 <SeekBar
                     android:id="@+id/seekBarPadel"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:padding="16dp"
                     android:max="5"
                     android:min="0"
-                    android:layout_weight="2" />
+                    android:layout_weight="1" />
 
             </LinearLayout>
 
@@ -243,7 +244,7 @@
 
                 <TextView
                     android:id="@+id/checkBoxBasket"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:layout_marginLeft="24dp"
@@ -252,12 +253,12 @@
 
                 <SeekBar
                     android:id="@+id/seekBarBasket"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:padding="16dp"
                     android:max="5"
                     android:min="0"
-                    android:layout_weight="2" />
+                    android:layout_weight="1" />
 
             </LinearLayout>
 
@@ -269,7 +270,7 @@
 
                 <TextView
                     android:id="@+id/checkBoxBalonmano"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:layout_marginLeft="24dp"
@@ -278,12 +279,12 @@
 
                 <SeekBar
                     android:id="@+id/seekBarBalonmano"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:padding="16dp"
                     android:max="5"
                     android:min="0"
-                    android:layout_weight="2" />
+                    android:layout_weight="1" />
 
             </LinearLayout>
 
@@ -293,7 +294,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:text="Crear cuenta"
-                android:layout_marginTop="16dp"/>
+                android:layout_margin ="16dp"/>
         </LinearLayout>
     </ScrollView>
 
