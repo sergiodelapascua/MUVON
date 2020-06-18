@@ -26,8 +26,10 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1.2"
-        android:background="@android:color/darker_gray"
+        android:background="@android:color/white"
+        app:labelVisibilityMode="labeled"
         app:menu="@menu/bottom_nav_menu"
+        app:itemIconTint="@color/colorPrimary"
         />
 
 </LinearLayout>

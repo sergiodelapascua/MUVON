@@ -71,6 +71,8 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="32dp"
             android:padding="12dp"
+            android:background="@drawable/backwithborder"
+            android:layout_margin="16dp"
             android:id="@+id/sin_historial"
             android:visibility="gone">
             <TextView
@@ -79,6 +81,7 @@
                 android:textSize="25sp"
                 android:textColor="@android:color/white"
                 android:textStyle="bold"
+                android:padding="16dp"
                 android:text="Parece que no te has unido a ningún partido. \n¡Únete a alguno si quieres jugar!"
                 android:layout_gravity="center"
                 android:textAlignment="center"/>

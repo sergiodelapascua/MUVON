@@ -44,55 +44,6 @@
             android:textSize="30sp"
             android:maxEms="10"/>
 
-        <!--
-          <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:text="Deportes"
-                android:layout_gravity="center"
-                android:textColor="@android:color/black"
-                android:textSize="26sp"/>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="100dp"
-                android:layout_marginTop="16dp"
-                android:orientation="horizontal" >
-
-                <ImageView
-                    android:id="@+id/ic_futbol"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_height="100dp"
-                    android:src="@drawable/ic_home"
-                    android:visibility="gone"/>
-
-                <ImageView
-                    android:id="@+id/ic_padel"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_height="100dp"
-                    android:src="@drawable/ic_home"
-                    android:visibility="gone"/>
-
-                <ImageView
-                    android:id="@+id/ic_basket"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_height="100dp"
-                    android:src="@drawable/ic_home"
-                    android:visibility="gone"/>
-
-                <ImageView
-                    android:id="@+id/ic_balonmano"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_height="100dp"
-                    android:src="@drawable/ic_home"
-                    android:visibility="gone"/>
-            </LinearLayout>
-        -->
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -248,12 +199,15 @@
             android:layout_height="match_parent"
             android:id="@+id/sin_partido_creado_activity"
             android:visibility="gone"
+            android:background="@drawable/backwithborder"
+            android:layout_margin="16dp"
             android:layout_marginBottom="16dp">
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textSize="25sp"
                 android:textStyle="bold"
+                android:padding="8dp"
                 android:textColor="@android:color/white"
                 android:text="Este usuario no ha creado ningún partido aún."
                 android:layout_gravity="center"
