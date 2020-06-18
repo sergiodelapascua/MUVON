@@ -220,7 +220,7 @@ public class VentanaPrincipal extends javax.swing.JFrame implements Constantes {
                                 borrarReserva(r);
                                 refrescarTable();
                             } else if (opcion == JOptionPane.NO_OPTION) {
-                                JOptionPane.showMessageDialog(null, "No hemos la reserva de " + r.getNombre() + ".", "Error", JOptionPane.ERROR_MESSAGE);
+                                JOptionPane.showMessageDialog(null, "No hemos borrado la reserva de " + r.getNombre() + ".", "Error", JOptionPane.ERROR_MESSAGE);
                             }
                         }
                     });
@@ -945,7 +945,7 @@ public class VentanaPrincipal extends javax.swing.JFrame implements Constantes {
         List<Reserva> lista = new ArrayList<>();
         String[] mensajes = null;
         try {
-            flujosalida.writeUTF("6,");
+            flujosalida.writeUTF("22,");
 
             String mensaje = "";
             mensaje = flujoentrada.readUTF();

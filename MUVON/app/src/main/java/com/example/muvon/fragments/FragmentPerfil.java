@@ -110,6 +110,7 @@ public class FragmentPerfil extends Fragment {
     }
 
     private List<Reserva> pedirLista() {
+        principal.conectar();
         List<Reserva> lista = new ArrayList<>();
         String[] mensajes = null;
         principal.escribir("14," + principal.cliente.getCorreo());

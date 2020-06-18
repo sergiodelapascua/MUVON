@@ -56,7 +56,7 @@ public class HiloPistasOcupadas extends Thread {
                 
                 mensaje += pista_id + "," + horario_id + ";";
             }
-            System.out.println("OCUPADAS: "+mensaje);
+            //System.out.println("OCUPADAS: "+mensaje);
             fsalida.writeUTF((mensaje.equals("")) ? "No se ha encontrado ninguna reserva ese día" : mensaje);
 
         } catch (SQLException ex) {

@@ -12,7 +12,6 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -20,17 +19,20 @@ import java.util.logging.Logger;
  *
  * @author sergio
  */
-class HiloListaReservaPorDeporte extends Thread {
+public class HiloHistorialPorDeporte extends Thread {
 
     private String url = "jdbc:mariadb://localhost:3306/proyecto";
     private String username = "root";
     private String password = "";
     private DataOutputStream fsalida;
     private int deporte_id;
-
-    public HiloListaReservaPorDeporte(DataOutputStream dot, String idp) {
+    private String correo;
+    
+    
+    public HiloHistorialPorDeporte(DataOutputStream dot, String idp, String c) {
         this.fsalida = dot;
         this.deporte_id = Integer.parseInt(idp);
+        this.correo = c;
     }
 
     @Override
@@ -51,9 +53,11 @@ class HiloListaReservaPorDeporte extends Thread {
                 + "AND p.partido_id = up.partido_id\n"
                 + "AND dp.pista_id = pi.pista_id \n"
                 + "AND dp.deporte_id = (?)\n"
+                + "AND u.usuario_id = (SELECT usuario_id FROM usuario WHERE correo = (?))\n"
                 + "AND p.fecha >= DATE(NOW())\n"
                 + "GROUP BY up.partido_id");) {
             p.setInt(1, deporte_id);
+            p.setString(2, correo);
             ResultSet rset = p.executeQuery();
             while (rset.next()) {
                 id = rset.getInt("partido_id");

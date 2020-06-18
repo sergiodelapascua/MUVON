@@ -49,7 +49,7 @@ public class HiloListaParticipantes extends Thread{
                 mensaje += nombre + "," + apellidos + "," + correo + ";";
                 //System.out.println(mensaje);
             }
-            System.out.println(mensaje);
+            //System.out.println(mensaje);
             fsalida.writeUTF((mensaje.equals(""))? "Error":mensaje);
             
         } catch (SQLException ex) {

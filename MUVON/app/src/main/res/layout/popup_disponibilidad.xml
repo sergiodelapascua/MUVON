@@ -19,4 +19,20 @@
         android:layout_height="wrap_content"
         android:padding="8dp"/>
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/sin_disponibilidad_horas"
+        android:visibility="gone">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="25sp"
+            android:textColor="@android:color/white"
+            android:textStyle="bold"
+            android:text="No tenemos disponibilidad para esa fecha. \nPor favor, escoge otra."
+            android:layout_gravity="center"
+            android:textAlignment="center"/>
+    </LinearLayout>
+
 </LinearLayout>

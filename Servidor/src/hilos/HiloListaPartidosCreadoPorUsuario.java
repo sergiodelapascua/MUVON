@@ -68,7 +68,7 @@ public class HiloListaPartidosCreadoPorUsuario extends Thread {
                 mensaje += id + "," + nombre + "," + pista + "," + horario + "," + fecha + "," + jugadores + ";";
             }
 
-            System.out.println("Lo que importa: "+mensaje);
+            //System.out.println("Lo que importa: "+mensaje);
             fsalida.writeUTF((mensaje.equals("")) ? "No se han encontrado reservas almacenadas" : mensaje);
 
         } catch (SQLException ex) {

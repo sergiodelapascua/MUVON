@@ -60,7 +60,7 @@ public class HiloPerfilUsuario extends Thread{
             while (rset2.next()) {
                 avatar = rset2.getInt("avatar_id");   
                 mensaje = ""+avatar;
-                System.out.println("ID DEL AVATAR "+mensaje);
+                //System.out.println("ID DEL AVATAR "+mensaje);
             }
             
             fsalida.writeUTF((mensaje.equals(""))? "Error al devolver el avatar":mensaje);

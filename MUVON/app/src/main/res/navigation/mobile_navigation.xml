@@ -18,6 +18,12 @@
         tools:layout="@layout/fragment_partidos" />
 
     <fragment
+        android:id="@+id/navigation_historial"
+        android:name="com.example.muvon.fragments.FragmentHistorial"
+        android:label="Historial"
+        tools:layout="@layout/fragment_historial" />
+
+    <fragment
         android:id="@+id/navigation_perfil"
         android:name="com.example.muvon.fragments.FragmentPerfil"
         android:label="Perfil"

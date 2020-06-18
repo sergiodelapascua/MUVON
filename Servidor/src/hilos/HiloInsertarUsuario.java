@@ -79,17 +79,17 @@ public class HiloInsertarUsuario extends Thread{
                     String consulta = "INSERT INTO usuario_deporte VALUES (" + id + ", 1 , " + futlvl + ")";
                     sentencia.executeUpdate(consulta);
                 }
-                System.out.println("futbol dentro");
+                //System.out.println("futbol dentro");
                 if(padlvl != 0){
                     String consulta = "INSERT INTO usuario_deporte VALUES (" + id + ", 2 , " + padlvl + ")";
                     sentencia.executeUpdate(consulta);
                 }
-                System.out.println("padel ok");
+                //System.out.println("padel ok");
                 if(baslvl != 0){
                     String consulta = "INSERT INTO usuario_deporte VALUES (" + id + ", 3 , " + baslvl + ")";
                     sentencia.executeUpdate(consulta);
                 }
-                System.out.println("");
+                //System.out.println("");
                 if(ballvl != 0){
                     String consulta = "INSERT INTO usuario_deporte VALUES (" + id + ", 4 , " + ballvl + ")";
                     sentencia.executeUpdate(consulta);
@@ -123,7 +123,7 @@ public class HiloInsertarUsuario extends Thread{
             md= MessageDigest.getInstance("SHA-512");
             md.update(password.getBytes());
             mb = md.digest();
-            System.out.println(String.valueOf(Hex.encodeHex(mb)));
+            //System.out.println(String.valueOf(Hex.encodeHex(mb)));
             
         } catch (NoSuchAlgorithmException e) {
             //Error

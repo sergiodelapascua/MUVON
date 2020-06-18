@@ -46,7 +46,7 @@ public class HiloUnirsePartido extends Thread{
             fsalida.writeUTF((insercion != 0) ? "OK" : "Error al unirse al partido");
             
         } catch (SQLException ex) {
-            System.out.println("AQUIIII");
+            //System.out.println("AQUIIII");
             ex.printStackTrace();
         } catch (IOException ex) {
             Logger.getLogger(HiloCompruebaCorreo.class.getName()).log(Level.SEVERE, null, ex);

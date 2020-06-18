@@ -4,21 +4,25 @@
     <item
         android:id="@+id/navigation_notificaciones"
         android:icon="@drawable/ic_noti"
+        android:iconTint="@color/colorPrimary"
         android:title="Notificaciones"  />
 
     <item
         android:id="@+id/navigation_partidos"
         android:icon="@drawable/ic_partidos"
+        android:iconTint="@color/colorPrimary"
         android:title="Partidos" />
 
-    <!--<item
-        android:id="@+id/navigation_social"
+    <item
+        android:id="@+id/navigation_historial"
         android:icon="@drawable/ic_social"
-        android:title="" />-->
+        android:iconTint="@color/colorPrimary"
+        android:title="Historial" />
 
     <item
         android:id="@+id/navigation_perfil"
         android:icon="@drawable/ic_home"
+        android:iconTint="@color/colorPrimary"
         android:title="Perfil" />
 
 </menu>

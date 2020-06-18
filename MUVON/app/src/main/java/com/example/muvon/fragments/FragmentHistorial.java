@@ -30,9 +30,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.util.ArrayList;
 import java.util.List;
 
-import static android.view.View.VISIBLE;
-
-public class FragmentPartidos extends Fragment {
+public class FragmentHistorial extends Fragment {
 
     private RecyclerView recyclerView;
     private RecyclerView.LayoutManager layoutManager;
@@ -41,29 +39,20 @@ public class FragmentPartidos extends Fragment {
     private Principal principal;
     private static ArrayAdapter<CharSequence> adapterSpinner;
 
-    public FragmentPartidos() {
+    public FragmentHistorial() {
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_partidos, container, false);
+        View view = inflater.inflate(R.layout.fragment_historial, container, false);
 
         principal = ((Principal) getActivity());
 
-        ly = view.findViewById(R.id.sin_propuestas);
+        ly = view.findViewById(R.id.sin_historial);
 
         context = this.getContext();
 
-        FloatingActionButton floatingButton = (FloatingActionButton) view.findViewById(R.id.floatingActionButton);
-        floatingButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent2 = new Intent(principal, NuevoPartido.class);
-                intent2.putExtra("login", principal.cliente);
-                startActivity(intent2);
-            }
-        });
-        recyclerView = view.findViewById(R.id.recyclerViewPartidos);
+        recyclerView = view.findViewById(R.id.recyclerViewPartidos_historial);
         layoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setHasFixedSize(true);
@@ -71,7 +60,7 @@ public class FragmentPartidos extends Fragment {
         recyclerView.setDrawingCacheEnabled(true);
         recyclerView.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
 
-        final Spinner spinner = (Spinner) view.findViewById(R.id.spinner);
+        final Spinner spinner = (Spinner) view.findViewById(R.id.spinner_historial);
         adapterSpinner = ArrayAdapter.createFromResource(context,
                 R.array.deportes_array, android.R.layout.simple_spinner_item);
         adapterSpinner.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -82,22 +71,28 @@ public class FragmentPartidos extends Fragment {
                 int selectedItem = parent.getSelectedItemPosition();
                 //System.out.println("LO SELECCIONADOOOO "+selectedItem);
                 if (selectedItem != 0) {
-                    principal.escribir("18," + selectedItem);
+                    principal.escribir("21," + selectedItem + "," + principal.cliente.getCorreo());
                     String mensaje = principal.leer();
+                    System.out.println("=======================================================0\nEL MENSAJEEEEEEEEEEEEEEEEEE \n"+mensaje);
                     if (!mensaje.equals("No se han encontrado reservas almacenadas")) {
-                        ly.setVisibility(View.GONE);
-                        AdapterPartido a2 = new AdapterPartido(cargarLista(mensaje), R.layout.fila_partidos, principal, new AdapterPartido.OnItemClickListener() {
-                            @Override
-                            public void onItemClick(Reserva reserva, int position) {
-                                Intent intent = new Intent(principal, DetallesPartido.class);
-                                intent.putExtra("reserva", reserva);
-                                intent.putExtra("cliente", principal.cliente);
-                                startActivity(intent);
-                            }
-                        });
-                        recyclerView.setAdapter(a2);
+
+                        if (mensaje == null || mensaje.equals("")) {
+                            ly.setVisibility(View.VISIBLE);
+                        } else {
+                            ly.setVisibility(View.GONE);
+                            AdapterPartido a2 = new AdapterPartido(cargarLista(mensaje), R.layout.fila_partidos, principal, new AdapterPartido.OnItemClickListener() {
+                                @Override
+                                public void onItemClick(Reserva reserva, int position) {
+                                    Intent intent = new Intent(principal, DetallesPartido.class);
+                                    intent.putExtra("reserva", reserva);
+                                    intent.putExtra("cliente", principal.cliente);
+                                    startActivity(intent);
+                                }
+                            });
+                            recyclerView.setAdapter(a2);
+                        }
                     } else {
-                        ly.setVisibility(VISIBLE);
+                        ly.setVisibility(View.VISIBLE);
                         DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
@@ -113,32 +108,20 @@ public class FragmentPartidos extends Fragment {
                             }
                         };
                         AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                        builder.setMessage("No hay partidos para ese deporte aún.\n" +
+                        builder.setMessage("No te has unido a ninún partido de ese deporte aún.\n" +
                                 "¡Aprovecha y crea tú uno!")
                                 .setPositiveButton("Aceptar", dialogClickListener).show();
                         adapterSpinner = ArrayAdapter.createFromResource(context,
                                 R.array.deportes_array, android.R.layout.simple_spinner_item);
                         adapterSpinner.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                         spinner.setAdapter(adapterSpinner);
-
-                        AdapterPartido a = new AdapterPartido(pedirLista(), R.layout.fila_partidos, principal, new AdapterPartido.OnItemClickListener() {
-                            @Override
-                            public void onItemClick(Reserva reserva, int position) {
-                                Intent intent = new Intent(principal, DetallesPartido.class);
-                                intent.putExtra("reserva", reserva);
-                                intent.putExtra("cliente", principal.cliente);
-                                startActivity(intent);
-                            }
-                        });
-                        recyclerView.setAdapter(a);
                     }
                 } else {
-
                     List<Reserva> lista = pedirLista();
 
-                    if(lista != null) {
+                    if (lista != null) {
                         ly.setVisibility(View.GONE);
-                        AdapterPartido a = new AdapterPartido(pedirLista(), R.layout.fila_partidos, principal, new AdapterPartido.OnItemClickListener() {
+                        AdapterPartido a = new AdapterPartido(lista, R.layout.fila_partidos, principal, new AdapterPartido.OnItemClickListener() {
                             @Override
                             public void onItemClick(Reserva reserva, int position) {
                                 Intent intent = new Intent(principal, DetallesPartido.class);
@@ -149,20 +132,35 @@ public class FragmentPartidos extends Fragment {
                         });
                         recyclerView.setAdapter(a);
                     } else
-                        ly.setVisibility(VISIBLE);
+                        ly.setVisibility(View.VISIBLE);
                 }
             } // to close the onItemSelected
 
             public void onNothingSelected(AdapterView<?> parent) {
+                List<Reserva> lista = pedirLista();
 
+                if (lista != null) {
+                    ly.setVisibility(View.GONE);
+                    AdapterPartido a = new AdapterPartido(lista, R.layout.fila_partidos, principal, new AdapterPartido.OnItemClickListener() {
+                        @Override
+                        public void onItemClick(Reserva reserva, int position) {
+                            Intent intent = new Intent(principal, DetallesPartido.class);
+                            intent.putExtra("reserva", reserva);
+                            intent.putExtra("cliente", principal.cliente);
+                            startActivity(intent);
+                        }
+                    });
+                    recyclerView.setAdapter(a);
+                } else
+                    ly.setVisibility(View.VISIBLE);
             }
         });
 
         List<Reserva> lista = pedirLista();
-
-        if(lista != null) {
+        System.out.println("=======================================================0LA LISTAAAA\n"+lista);
+        if (lista != null) {
             ly.setVisibility(View.GONE);
-            AdapterPartido a = new AdapterPartido(pedirLista(), R.layout.fila_partidos, principal, new AdapterPartido.OnItemClickListener() {
+            AdapterPartido a = new AdapterPartido(lista, R.layout.fila_partidos, principal, new AdapterPartido.OnItemClickListener() {
                 @Override
                 public void onItemClick(Reserva reserva, int position) {
                     Intent intent = new Intent(principal, DetallesPartido.class);
@@ -173,7 +171,7 @@ public class FragmentPartidos extends Fragment {
             });
             recyclerView.setAdapter(a);
         } else
-            ly.setVisibility(VISIBLE);
+            ly.setVisibility(View.VISIBLE);
 
         return view;
     }
@@ -196,7 +194,7 @@ public class FragmentPartidos extends Fragment {
     private List<Reserva> pedirLista() {
         List<Reserva> lista = new ArrayList<>();
         String[] mensajes = null;
-        principal.escribir("6,");
+        principal.escribir("20," + principal.cliente.getCorreo());
 
         String mensaje = "";
         mensaje = principal.leer();

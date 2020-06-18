@@ -168,7 +168,7 @@
                     android:layout_marginLeft="24dp"
                     android:padding="16dp"
                     android:text="Deporte"
-                    android:textColor="@android:color/black"
+                    android:textColor="@android:color/white"
                     android:textSize="24sp" />
 
                 <TextView
@@ -178,7 +178,7 @@
                     android:layout_marginRight="36dp"
                     android:padding="16dp"
                     android:text="Nivel"
-                    android:textColor="@android:color/black"
+                    android:textColor="@android:color/white"
                     android:textSize="24sp"
                     android:gravity="end" />
 
@@ -195,6 +195,7 @@
                     android:layout_weight="1"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="24dp"
+                    android:textColor="@android:color/black"
                     android:textSize="24sp"
                     android:text="Fútbol" />
 
@@ -222,6 +223,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:layout_marginLeft="24dp"
+                    android:textColor="@android:color/black"
                     android:textSize="24sp"
                     android:text="Padel" />
 
@@ -248,6 +250,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:layout_marginLeft="24dp"
+                    android:textColor="@android:color/black"
                     android:textSize="24sp"
                     android:text="Basket" />
 
@@ -274,6 +277,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:layout_marginLeft="24dp"
+                    android:textColor="@android:color/black"
                     android:textSize="24sp"
                     android:text="Balonmano" />
 

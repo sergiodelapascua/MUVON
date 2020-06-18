@@ -12,6 +12,7 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 
 import androidx.annotation.RequiresApi;
@@ -73,6 +74,7 @@ public class NuevoPartido extends AppCompatActivity implements Constantes{
     private RecyclerView.LayoutManager layoutManager;
     private AlertDialog.Builder builder;
     private AlertDialog dialog;
+    private LinearLayout linear;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -290,6 +292,7 @@ public class NuevoPartido extends AppCompatActivity implements Constantes{
 
         builder = new AlertDialog.Builder(NuevoPartido.this);
         View view = LayoutInflater.from(NuevoPartido.this).inflate(R.layout.popup_disponibilidad, null);
+        linear = (LinearLayout) view.findViewById(R.id.sin_disponibilidad_horas);
         builder.setView(view);
         dialog = builder.create();
         dialog.show();
@@ -304,7 +307,7 @@ public class NuevoPartido extends AppCompatActivity implements Constantes{
 
         String text = fecha_escogida.getText().toString().trim();
 
-        System.out.println("LA PUTA FECHA DE LOS COJONES: "+text);
+        //System.out.println("LA FECHA: "+text);
         java.sql.Date sqlDate = null;
 
         try {
@@ -318,21 +321,23 @@ public class NuevoPartido extends AppCompatActivity implements Constantes{
             e.printStackTrace();
         }
 
-        System.out.println("LA PUTA FECHA DE LOS COJONES2222: "+sqlDate);
-
         List<PistaDisponible> lista = getDisponibilidad(spinner.getSelectedItemPosition(), sqlDate);
 
         //System.out.println("LA LISTA DISPONIBLE\n"+lista);
 
-        AdapterPistaDisponible a = new AdapterPistaDisponible(lista
-                , R.layout.fila_disponibilidad, NuevoPartido.this, new AdapterPistaDisponible.OnItemClickListener() {
-            @Override
-            public void onItemClick(PistaDisponible p, int position) {
-                pistaSeleccionada = p;
-                System.out.println("PISTA SELECCIONADA"+p);
-                dialog.dismiss();
-            }
-        });
-        recyclerView.setAdapter(a);
+        if(lista.size() != 0) {
+            linear.setVisibility(View.GONE);
+            AdapterPistaDisponible a = new AdapterPistaDisponible(lista
+                    , R.layout.fila_disponibilidad, NuevoPartido.this, new AdapterPistaDisponible.OnItemClickListener() {
+                @Override
+                public void onItemClick(PistaDisponible p, int position) {
+                    pistaSeleccionada = p;
+                    System.out.println("PISTA SELECCIONADA" + p);
+                    dialog.dismiss();
+                }
+            });
+            recyclerView.setAdapter(a);
+        } else
+            linear.setVisibility(View.VISIBLE);
     }
 }

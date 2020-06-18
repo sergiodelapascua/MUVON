@@ -42,7 +42,7 @@ class HiloInvitados extends Thread{
             ResultSet rset = p.executeQuery();
             while (rset.next()) {
                 mensaje = rset.getString("num_jugadores_inicio"); 
-                System.out.println("Invitados al partido "+mensaje);
+                //System.out.println("Invitados al partido "+mensaje);
             }
             
             fsalida.writeUTF((mensaje.equals(""))? "Error":mensaje);

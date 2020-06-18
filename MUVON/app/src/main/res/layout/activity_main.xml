@@ -75,7 +75,8 @@
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
         android:padding="8dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="32dp"
+        android:textColor="@android:color/black"
         android:textSize="18sp"
         android:text="¿No tienes una cuenta aún?"/>
 
@@ -84,11 +85,12 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
+        android:textColor="@android:color/black"
         android:textSize="18sp"
         android:textStyle="italic"
         android:text="Crea una cuenta aquí"/>
 
-    <TextView
+    <!--<TextView
         android:id="@+id/textViewContrasena"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -97,6 +99,6 @@
         android:layout_marginTop="16dp"
         android:textSize="18sp"
         android:textStyle="italic"
-        android:text="Solicitar un cambio de contraseña"/>
+        android:text="Solicitar un cambio de contraseña"/> -->
 
 </LinearLayout>

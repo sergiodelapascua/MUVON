@@ -209,7 +209,8 @@ public class DetallesPartido extends AppCompatActivity implements Constantes {
                             switch (which) {
                                 case DialogInterface.BUTTON_POSITIVE:
                                     escribir("7," + reserva.getId());
-                                    leer();
+                                    String m = leer();
+                                    System.out.println("LECTURAAAAAAA: "+m);
                                     finish();
                                     break;
 

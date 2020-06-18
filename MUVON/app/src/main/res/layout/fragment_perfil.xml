@@ -201,7 +201,7 @@
                     android:textSize="25sp"
                     android:textStyle="bold"
                     android:textColor="@android:color/white"
-                    android:text="Parece que no has creado ningún partido. \n¡Únete a alguno si quieres jugar o crea el tuyo!"
+                    android:text="Vaya, no has creado ningún partido aún. \n¡Únete a alguno si quieres jugar o crea el tuyo!"
                     android:layout_gravity="center"
                     android:textAlignment="center"/>
             </LinearLayout>

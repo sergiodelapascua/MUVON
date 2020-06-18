@@ -17,7 +17,7 @@ import java.util.logging.Logger;
  *
  * @author sergio
  */
-public class HiloAtiendeUsuario extends Thread {
+public class HiloAtiendeUsuario extends Thread implements Constantes{
 
     private DataInputStream fentrada;
     private DataOutputStream fsalida;
@@ -36,62 +36,71 @@ public class HiloAtiendeUsuario extends Thread {
             while (true) {
                 mensajes = fentrada.readUTF().split(",");
                 switch (mensajes[0]) {
-                    case "1":
+                    case LOGIN:
                         login(mensajes);
                         break;
-                    case "2":
+                    case CREAR_USUARIO:
                         crearUsuario(mensajes);
                         break;
-                    case "3":
+                    case COMPROBAR_CORREO:
                         comprobarCorreo(mensajes[1]);
                         break;
-                    case "4":
+                    case LISTA_CLIENTES:
                         extraerListaClientes(mensajes[1]);
                         break;
-                    case "5":
+                    case BORRAR_CLIENTE:
                         borrarCliente(mensajes[1]);
                         break;
-                    case "6":
+                    case LISTA_RESERVAS:
                         extraerListaReservas();
                         break;
-                    case "7":
+                    case BORRAR_RESERVA:
                         borrarReserva(mensajes[1]);
                         break;
-                    case "8":
+                    case BUSCAR_INFO_PISTAS:
                         buscarPistasOcupadas(mensajes[1], mensajes[2]);
                         break;
-                    case "9":
+                    case CREAR_RESERVA:
                         crearReserva(mensajes[1], mensajes[2], mensajes[3], mensajes[4], mensajes[5], mensajes[6]);
                         break;
-                    case "10":
+                    case LOGIN_MOVIL:
                         loginMovil(mensajes);
                         break;
-                    case "11":
+                    case LISTA_PARTICIPANTES:
                         listarParticipantes(mensajes[1]);
                         break;
-                    case "12":
+                    case PERFIL_USUARIO:
                         perfilUsuario(mensajes[1]);
                         break;
-                    case "13":
+                    case INVITADOS:
                         invitados(mensajes[1]);
                         break;
-                    case "14":
+                    case PARTIDOS_USUARIO:
                         partidoDeUsuario(mensajes[1]);
                         break;
-                    case "15":
+                    case NOTIFICACIONES:
                         comprobarNotificaciones(mensajes[1]);
                         break;
-                    case "16":
+                    case UNIRSE_PARTIDO:
                         unirsePartido(mensajes[1], mensajes[2]);
                         break;
-                    case "17":
+                    case ABANDONAR_PARTIDO:
                         abandonarPartido(mensajes[1], mensajes[2]);
                         break;
-                    case "18":
+                    case LISTA_DEPORTE_FILTRADO:
                         extraerListaPorDeporte(mensajes[1]);
                         break;
-                    case "19":
+                    case LISTA_FILTRADA_RESERVA:
                         listaReservasOrdenada(mensajes[1]);
+                        break;
+                    case HISTORIAL:
+                        historial(mensajes[1]);
+                        break;
+                    case HISTORIAL_ORDENADO:
+                        extraerHistorialPorDeporte(mensajes[1], mensajes[2]);
+                        break;
+                    case RESERVAS:
+                        listarTodasLasReservas();
                         break;
                     default:
                         System.out.println("Se ha liado en el hilo que atiende al usuario");
@@ -189,6 +198,16 @@ public class HiloAtiendeUsuario extends Thread {
         }
     }
 
+    private void listarTodasLasReservas() {
+        try {
+            HiloTodasLasReservas hl = new HiloTodasLasReservas(fsalida);
+            hl.run();
+            hl.join();
+        } catch (InterruptedException ex) {
+            Logger.getLogger(HiloAtiendeUsuario.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
     private void borrarReserva(String id) {
         try {
             HiloBorrarReserva hl = new HiloBorrarReserva(fsalida, Integer.parseInt(id));
@@ -269,6 +288,16 @@ public class HiloAtiendeUsuario extends Thread {
         }
     }
 
+    private void historial(String mensaje) {
+        try {
+            HiloHistorial hl = new HiloHistorial(fsalida, mensaje);
+            hl.run();
+            hl.join();
+        } catch (InterruptedException ex) {
+            Logger.getLogger(HiloAtiendeUsuario.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
     private void unirsePartido(String correo, String idp) {
         try {
             HiloUnirsePartido hl = new HiloUnirsePartido(fsalida, correo, idp);
@@ -292,6 +321,16 @@ public class HiloAtiendeUsuario extends Thread {
     private void extraerListaPorDeporte(String idp) {
         try {
             HiloListaReservaPorDeporte hl = new HiloListaReservaPorDeporte(fsalida, idp);
+            hl.run();
+            hl.join();
+        } catch (InterruptedException ex) {
+            Logger.getLogger(HiloAtiendeUsuario.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    private void extraerHistorialPorDeporte(String idp, String c) {
+        try {
+            HiloHistorialPorDeporte hl = new HiloHistorialPorDeporte(fsalida, idp, c);
             hl.run();
             hl.join();
         } catch (InterruptedException ex) {

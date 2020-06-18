@@ -42,14 +42,15 @@ public class HiloListaReservas extends Thread {
 
         try ( Connection conexion = DriverManager.getConnection(url, username, password);  
                 Statement sentencia = conexion.createStatement();  
-                ResultSet rset = sentencia.executeQuery("SELECT p.partido_id, u.nombre, u.apellidos, pi.descripcion, h.franja, p.fecha, COUNT(up.partido_id)+p.num_jugadores_inicio as jugadores\n"
+                ResultSet rset = sentencia.executeQuery("SELECT p.partido_id, u.nombre, u.apellidos, pi.descripcion, h.franja, p.fecha, COUNT(up.partido_id)+p.num_jugadores_inicio as jugadores, p.max_jugadores\n"
                 + "FROM usuario u, partido p, horario h, pista pi, usuario_partido up\n"
                 + "WHERE p.pista_id = pi.pista_id\n"
                 + "AND p.horario_id = h.horario_id\n"
                 + "AND u.usuario_id = p.usuario_id\n"
                 + "AND p.partido_id = up.partido_id\n"
                 + "AND p.fecha >= DATE(NOW())\n"
-                + "GROUP BY up.partido_id");) {
+                + "GROUP BY up.partido_id\n"
+                + "HAVING jugadores < p.max_jugadores");) {
             while (rset.next()) {
                 id = rset.getInt("partido_id");
                 nombre = rset.getString("nombre") + " " + rset.getString("apellidos");
